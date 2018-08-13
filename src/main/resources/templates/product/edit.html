@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: copy"></head>
+<body>
+
+<!-- header -->
+<div th:replace="fragments/header :: copy"></div>
+
+<form th:action="@{/edit_product}" th:object="${product}" method="POST">
+<input type="hidden" th:field="*{id}" />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            posting title
+            <input type="text" name="PostingTitle" value="" tabindex="1" id="PostingTitle" th:field="*{productName}" maxlength="70">
+        </div>
+        <div class="col-md-3">
+            specific location
+            <input type="text" name="GeographicArea" value="" tabindex="1" id="GeographicArea" maxlength="80">
+        </div>
+        <div class="col-md-3">
+            postal code
+            <input type="text" name="postal" value="" tabindex="1" id="postal_code" maxlength="15">
+        </div>
+        <div class="col-md-3">
+            category
+            <select class="selectpicker" th:field="*{category}">
+                <option th:value="1">cat1</option>
+                <option th:value="2">cat2</option>
+                <option th:value="3">cat3</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            posting body
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <textarea name="PostingBody" placeholder="" tabindex="1" id="PostingBody" th:field="*{productDescription}" rows="10"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+        </div>
+    </div>
+</div>
+</form>
+
+<!--==========Footer area==========-->
+<footer th:replace="fragments/footer :: copy"></footer>
+<!--==========End Footer area==========-->
+
+
+<div th:replace="fragments/js :: copy"></div>
+</body>
+</html>

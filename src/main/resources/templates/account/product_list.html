@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: copy}"></head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header :: copy}"></div>
+
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Manage</th>
+        <th scope="col">Product Title</th>
+        <th scope="col">Category</th>
+        <th scope="col">Last Update Time</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr th:each="product : ${productList}">
+            <div th:if="${product.isActive} == 1">
+                <td th:text="${product.id}"></td>
+                <td>
+                    <a th:href="@{'/delete_product/' + ${product.id}}">delete</a>
+                    <a th:href="@{'/edit_product/' + ${product.id}}">edit</a>
+                </td>
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.category.categoryName}"></td>
+                <!--<td th:text="${product.updatetimestamp}"></td>-->
+            </div>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<!--==========Footer area==========-->
+<footer th:replace="~{fragments/footer :: copy}"></footer>
+<!--==========End Footer area==========-->
+
+<div th:replace="~{fragments/js :: copy}"></div>
+
+</body>
+</html>

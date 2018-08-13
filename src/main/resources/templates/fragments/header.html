@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<body>
+
+<div th:fragment="copy">
+
+<!--==========First Header==========-->
+<div class="first_header">
+    <div class="container custome_container">
+        <div class="live_chat_area pull-left">
+            <a href="#"><i class="lnr lnr-bubble"></i>Live Chat Us</a>
+            <a href="#"><i class="lnr lnr-envelope"></i>Call Us Anytime: +660-984-893</a>
+        </div>
+        <div class="language_area pull-right">
+            <select class="selectpicker">
+                <option>English</option>
+                <option>Chinese</option>
+                <option>Japanese</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="logo_area">
+    <div class="container custome_container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="website_logo">
+                    <a href="../index.html"><img src="img/logo.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="find_item_inner">
+                    <input type="text" placeholder="Search Here">
+                    <!--<p th:each="category : ${@categoryService.allCategories()}"-->
+                       <!--th:text="${category.categoryName}">A Smoke Test</p>-->
+                    <!--<div th:text="${@categoryService.allCategories()}">...</div>-->
+                    <select class="selectpicker">
+                        <option>All Categories</option>
+                        <option>All Categories</option>
+                        <option>All Categories</option>
+                    </select>
+                    <a class="find_button" href="#">Find Items</a>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="cart_area">
+                    <div class="wishlist">
+                        <i class="lnr lnr-heart"></i>
+                        <h5>Wishlist</h5>
+                    </div>
+                    <div class="cart">
+                        <a href="/cart">
+                            <i class="lnr lnr-cart"></i>
+                            <h5>Cart</h5>
+                            <span>7</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--==========First Header==========-->
+<!--==========Main Menu Area==========-->
+<header class="main_menu_area">
+    <nav class="navbar navbar-default">
+        <div class="container custome_container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="post_product">Post Product</a></li>
+                    <li><a href="browse_product">Browse Product</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/my_account"><i class="lnr lnr-user"></i> My Account</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/logout}" sec:authorize="isAuthenticated()"><i class="lnr lnr-user"></i> Logout</a>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container -->
+    </nav>
+</header>
+<!--==========Main Menu Area==========-->
+
+</div>
+</body>
+
+</html>
