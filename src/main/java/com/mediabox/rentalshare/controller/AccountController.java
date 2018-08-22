@@ -3,19 +3,24 @@ package com.mediabox.rentalshare.controller;
 import com.mediabox.rentalshare.model.Category;
 import com.mediabox.rentalshare.model.Price;
 import com.mediabox.rentalshare.model.Product;
-import com.mediabox.rentalshare.repository.CategoryRepository;
-import com.mediabox.rentalshare.repository.PriceRepository;
-import com.mediabox.rentalshare.repository.ProductRepository;
-import com.mediabox.rentalshare.repository.UserRepository;
+import com.mediabox.rentalshare.model.ProductImage;
+import com.mediabox.rentalshare.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.DateTimeException;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +37,9 @@ public class AccountController {
 
     @Autowired
     PriceRepository priceRepository;
+
+    @Autowired
+    ProductImageRepository productImageRepository;
 
     @RequestMapping(value = "/my_account", method = RequestMethod.GET)
     public ModelAndView myAccount() {
@@ -168,5 +176,53 @@ public class AccountController {
         }
 
         return mav;
+    }
+
+    private static String UPLOADED_FOLDER = "D://temp//";
+
+    @PostMapping("/upload")
+    public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+            mav.setViewName("redirect:/index");
+            return mav;
+        }
+
+        try {
+            // get product
+            String productId = request.getParameter("productId");
+            mav.setViewName("redirect:/edit_product/" + productId);
+
+            // Get the file and save it somewhere
+            this.saveFileToLocal(file);
+
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully uploaded '" + file.getOriginalFilename() + "'");
+
+            this.addProductImage(productId, file.getOriginalFilename());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mav;
+    }
+
+    private void saveFileToLocal(MultipartFile file) throws IOException {
+        // Get the file and save it somewhere
+        byte[] bytes = file.getBytes();
+        Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+        Files.write(path, bytes);
+    }
+
+    private void addProductImage(String productId, String filePath) {
+        ProductImage productImage = new ProductImage();
+        Product productEdit = productRepository.findById(Integer.parseInt(productId)).get();
+        productImage.setImagePath(filePath);
+        productImage.setCreateTimestamp(new Date());
+        productImage.setUpdateTimestamp(new Date());
+        productImage.setProduct(productEdit);
+        productImageRepository.save(productImage);
     }
 }

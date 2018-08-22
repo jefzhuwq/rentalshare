@@ -120,6 +120,13 @@
     </table>
 </div>
 
+<form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="hidden" th:value="${product.id}" name="productId" />
+    <input type="file" name="file" /><br/><br/>
+    <input type="submit" value="Submit" />
+</form>
+
+
 <div class="center"><button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-primary center-block">Click Me</button></div>
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
