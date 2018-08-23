@@ -1,6 +1,12 @@
 package com.mediabox.rentalshare.controller;
 
-import com.mediabox.rentalshare.model.Category;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mediabox.rentalshare.model.Price;
 import com.mediabox.rentalshare.model.Product;
 import com.mediabox.rentalshare.model.ProductImage;
@@ -15,15 +21,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.DateTimeException;
 import java.util.Date;
 import java.util.List;
+
+import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
 
 
 @Controller
@@ -89,6 +95,9 @@ public class AccountController {
 
             List<Price> priceList = priceRepository.findByProduct(product);
             mav.addObject("priceList", priceList);
+
+            List<ProductImage> productImageList = productImageRepository.findByProduct(product);
+            mav.addObject("productImageList", productImageList);
         } else{
             mav.setViewName("/error");
         }
@@ -156,6 +165,24 @@ public class AccountController {
         return mav;
     }
 
+    @RequestMapping(value = "/delete_image/{id}", method = RequestMethod.GET)
+    public ModelAndView deleteImage(@PathVariable("id") int id) {
+        ProductImage productImage = productImageRepository.findById(id).get();
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        ModelAndView mav = new ModelAndView();
+        if (productImage.getProduct().getUser().getEmail().equals(name)) {
+            mav.setViewName("redirect:/edit_product/" + productImage.getProduct().getId());
+            productImageRepository.delete(productImage);
+        } else{
+            mav.setViewName("/error");
+        }
+
+        return mav;
+    }
+
     @RequestMapping(value = "/add_price", method = RequestMethod.POST)
     public ModelAndView addPrice(@ModelAttribute Price price, HttpServletRequest request) {
         String productId = request.getParameter("productId");
@@ -178,7 +205,7 @@ public class AccountController {
         return mav;
     }
 
-    private static String UPLOADED_FOLDER = "D://temp//";
+
 
     @PostMapping("/upload")
     public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, HttpServletRequest request) {
@@ -224,5 +251,41 @@ public class AccountController {
         productImage.setUpdateTimestamp(new Date());
         productImage.setProduct(productEdit);
         productImageRepository.save(productImage);
+    }
+
+    String clientRegion = "*** Client region ***";
+    String bucketName = "*** Bucket name ***";
+    String stringObjKeyName = "*** String object key name ***";
+    String fileObjKeyName = "*** File object key name ***";
+    String fileName = "*** Path to file to upload ***";
+
+    private void addProductImageToS3() {
+        try {
+            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                    .withRegion(clientRegion)
+                    .withCredentials(new ProfileCredentialsProvider())
+                    .build();
+
+            // Upload a text string as a new object.
+            s3Client.putObject(bucketName, stringObjKeyName, "Uploaded String Object");
+
+            // Upload a file as a new object with ContentType and title specified.
+            PutObjectRequest request = new PutObjectRequest(bucketName, fileObjKeyName, new File(fileName));
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("plain/text");
+            metadata.addUserMetadata("x-amz-meta-title", "someTitle");
+            request.setMetadata(metadata);
+            s3Client.putObject(request);
+        }
+        catch(AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+        }
+        catch(SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+        }
     }
 }

@@ -126,6 +126,18 @@
     <input type="submit" value="Submit" />
 </form>
 
+<div class="row">
+    <div class="col-md-4" th:each="productImage, i : ${productImageList}">
+        <div class="thumbnail">
+            <a href="/w3images/lights.jpg">
+                <img th:src="${productImage.imagePath}" alt="" style="width:100%">
+                <div class="caption">
+                    <p><a th:href="@{'/delete_image/' + ${productImage.id}}">delete</a></p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 
 <div class="center"><button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-primary center-block">Click Me</button></div>
 

@@ -1,10 +1,8 @@
 package com.mediabox.rentalshare.controller;
 
-import com.mediabox.rentalshare.model.Category;
 import com.mediabox.rentalshare.model.Product;
 import com.mediabox.rentalshare.model.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;

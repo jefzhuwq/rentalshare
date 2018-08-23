@@ -78,6 +78,13 @@
             <artifactId>thymeleaf-extras-springsecurity4</artifactId>
         </dependency>
 
+        <!-- S3 Client -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.11.392</version>
+        </dependency>
+
     </dependencies>
 
     <build>
