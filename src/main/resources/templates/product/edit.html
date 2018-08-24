@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: copy"></head>
+<body>
+
+
+<!-- line modal -->
+<div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h3 class="modal-title" id="lineModalLabel">My Modal</h3>
+            </div>
+            <form th:action="@{/add_price}" th:object="${price}" method="POST">
+                <input type="hidden" th:value="${product.id}" name="productId" />
+                <div class="modal-body">
+                <!-- content goes here -->
+                    <div class="form-group">
+                        <label for="periodType">Period Type</label>
+                        <select class="selectpicker" id="periodType" th:field="*{periodType}">
+                            <option th:value="1">cat1</option>
+                            <option th:value="2">cat2</option>
+                            <option th:value="3">cat3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Price (USD)</label>
+                        <input type="number" class="form-control" id="exampleInputPassword1" th:field="*{unitPrice}" placeholder="Password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group btn-group-justified" role="group" aria-label="group button">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"  role="button">Close</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <input type="submit" value="Submit"  class="btn btn-default btn-hover-green" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- header -->
+<div th:replace="fragments/header :: copy"></div>
+
+
+<div class="container">
+    <form th:action="@{/edit_product}" th:object="${product}" method="POST">
+        <input type="hidden" th:field="*{id}" />
+        <div class="form-group row">
+            <label for="PostingTitle" class="col-2 col-form-label">Post Title</label>
+            <div class="col-10">
+                <input class="form-control" type="text" name="PostingTitle" value="" tabindex="1" id="PostingTitle" th:field="*{productName}" maxlength="70" placeholder="Posting title">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="Location" class="col-2 col-form-label">Location</label>
+            <div class="col-10">
+                <input class="form-control" type="text" name="Location" value="" tabindex="1" id="Location" maxlength="80" placeholder="Location">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="postal_code" class="col-2 col-form-label">Postal Code</label>
+            <div class="col-10">
+                <input class="form-control" type="text" name="postal" value="" tabindex="1" id="postal_code" maxlength="15" placeholder="Postal code">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="category" class="col-2 col-form-label">Category</label>
+            <div class="col-10">
+                <select class="selectpicker" th:field="*{category}" id="category">
+                    <option th:value="1">cat1</option>
+                    <option th:value="2">cat2</option>
+                    <option th:value="3">cat3</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="PostingBody" class="col-2 col-form-label">Telephone</label>
+            <div class="col-10">
+                <textarea class="form-control" name="PostingBody" placeholder="" tabindex="1" id="PostingBody" th:field="*{productDescription}" rows="10" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-10">
+                <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+            </div>
+        </div>
+    </form>
+    <div class="form-group row">
+        <div class="col-10">
+            <button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-lg btn-primary">Add Price</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-10">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Manage</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Period Type</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="price : ${priceList}">
+                    <td th:text="${price.id}"></td>
+                    <td>
+                        <a th:href="@{'/delete_price/' + ${price.id}}" class="btn btn-sm">Delete</a>
+                    </td>
+                    <td th:text="${price.unitPrice}"></td>
+                    <td th:text="${price.periodType}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-10">
+            <form method="POST" action="/upload" enctype="multipart/form-data">
+                <input type="hidden" th:value="${product.id}" name="productId" />
+                <input type="file" name="file" />
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </form>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-4" th:each="productImage, i : ${productImageList}">
+            <div class="thumbnail">
+                <a href="/w3images/lights.jpg">
+                    <img th:src="${productImage.imagePath}" alt="" style="width:100%">
+                    <div class="caption">
+                        <p><a th:href="@{'/delete_image/' + ${productImage.id}}" class="btn btn-sm">Delete</a></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+
+<!--==========Footer area==========-->
+<footer th:replace="fragments/footer :: copy"></footer>
+<!--==========End Footer area==========-->
+
+<div th:replace="fragments/js :: copy"></div>
+
+
+</body>
+</html>

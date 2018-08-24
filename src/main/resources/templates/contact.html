@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: copy"></head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header :: copy}"></div>
+
+<form th:action="@{/signup}" method="get">
+    <button class="btn btn-md btn-warning btn-block" type="Submit">Go To Registration Page</button>
+</form>
+
+<!-- Body -->
+<section class="row m0 get_touch_area">
+    <div class="container">
+        <div class="row section_title">
+            <h3>Contact Us</h3>
+        </div>
+        <div class="row get_touch">
+            <div class="col-sm-4 p0 get_touch_inner">
+                <div class="media item">
+                    <div class="media-left item_left">
+                        <a href="#">
+                            <img class="media-object" src="img/get_touch/location.png" alt="">
+                        </a>
+                    </div>
+                    <div class="media-body item_right">
+                        <a href="#">TODO</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 p0 get_touch_inner">
+                <div class="media item">
+                    <div class="media-left item_left">
+                        <a href="#">
+                            <img class="media-object" src="img/get_touch/call.png" alt="">
+                        </a>
+                    </div>
+                    <div class="media-body item_right">
+                        <a href="/">TODO</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 p0 get_touch_inner">
+                <div class="media item">
+                    <div class="media-left item_left">
+                        <a href="#">
+                            <img class="media-object" src="img/get_touch/message.png" alt="">
+                        </a>
+                    </div>
+                    <div class="media-body item_right">
+                        <a href="/">TODO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row drop_message">
+            <div class="title">
+                <h3>Tell us what you think</h3>
+            </div>
+            <form class="row form-inline contact_box" action="contact_process.php" method="post" id="contactForm">
+                <div class="form-group col-md-4">
+                    <input type="text" class="form-control input_box" id="name" placeholder="Full Name *">
+                </div>
+                <div class="form-group col-md-4">
+                    <input type="email" class="form-control input_box" id="email" placeholder="Email Address *">
+                </div>
+                <div class="form-group col-md-4">
+                    <input type="text" class="form-control input_box" id="website" placeholder="Your Phone">
+                </div>
+                <div class="form-group col-md-12">
+                    <textarea class="form-control" rows="3" id="message" placeholder="Type Your Message..."></textarea>
+                </div>
+                <div class="form-group col-md-12">
+                    <button type="submit" value="Send Message" class="add_cart Send_Message"><i class="lnr lnr-location"></i>Send Message</button>
+                </div>
+            </form>
+            <div id="success">
+                <p>Your text message sent successfully!</p>
+            </div>
+            <div id="error">
+                <p>Sorry! Message not sent. Something went wrong!!</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Body -->
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: copy}"></footer>
+<!-- End Footer -->
+
+<div th:replace="~{fragments/js :: copy}"></div>
+
+</body>
+</html>
