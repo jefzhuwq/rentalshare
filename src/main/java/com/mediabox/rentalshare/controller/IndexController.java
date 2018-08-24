@@ -69,6 +69,12 @@ public class IndexController {
         return mav;
     }
 
+    @RequestMapping(value = "/contact", method = RequestMethod.GET)
+    public ModelAndView contact() {
+        ModelAndView mav = new ModelAndView("contact");
+        return mav;
+    }
+
     @RequestMapping(value = "/post_product", method = RequestMethod.GET)
     public ModelAndView postProduct() {
         ModelAndView mav = new ModelAndView("/product/create");
