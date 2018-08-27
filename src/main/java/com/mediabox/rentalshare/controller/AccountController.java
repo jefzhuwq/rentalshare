@@ -118,6 +118,8 @@ public class AccountController {
             productEdit.setCategory(product.getCategory());
             productEdit.setProductDescription(product.getProductDescription());
             productEdit.setProductName(product.getProductName());
+            productEdit.setLocation(product.getLocation());
+            productEdit.setZipCode(product.getZipCode());
             productEdit.setUpdateTimestamp(new Date());
             productRepository.save(productEdit);
         } else{

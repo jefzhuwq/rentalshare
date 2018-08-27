@@ -1,17 +1,29 @@
 package com.mediabox.rentalshare.controller;
 
+import com.mediabox.rentalshare.model.Price;
 import com.mediabox.rentalshare.model.Product;
+import com.mediabox.rentalshare.model.ProductImage;
 import com.mediabox.rentalshare.model.User;
+import com.mediabox.rentalshare.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Controller
 public class IndexController {
+
+    @Autowired
+    ProductRepository productRepository;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
@@ -52,8 +64,24 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/search_result", method = RequestMethod.GET)
-    public ModelAndView searchResult() {
+    public ModelAndView searchResult(@RequestParam("keyword") String keyword) {
         ModelAndView mav = new ModelAndView("search_result");
+        List<Product> productList = this.search(keyword);
+        mav.addObject("productList", productList);
+        return mav;
+    }
+
+    private List<Product> search(String keyword) {
+        List<Product> productList = productRepository.searchByKeyword(keyword);
+        return productList;
+    }
+
+    @RequestMapping(value = "/view_product/{id}", method = RequestMethod.GET)
+    public ModelAndView editProduct(@PathVariable("id") int id) {
+        ModelAndView mav = new ModelAndView("/product/view");
+        Product product = productRepository.findById(id).get();
+        mav.addObject("product", product);
+
         return mav;
     }
 

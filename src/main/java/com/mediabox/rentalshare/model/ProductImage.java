@@ -22,6 +22,9 @@ public class ProductImage {
     @JoinColumn(name="product_id")
     private Product product;
 
+    @Column(name = "is_primary")
+    private Boolean isPrimary;
+
     @Column(name = "createtimestamp")
     private Date createTimestamp;
 

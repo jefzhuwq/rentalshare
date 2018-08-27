@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,11 +22,25 @@ public class Product {
     @Column(name = "product_description")
     private String productDescription;
 
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "zip_code")
+    private String zipCode;
+
     @Column(name = "is_active")
     private int isActive;
 
     @Column(name = "createtimestamp")
     private Date createTimestamp;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="product_id")
+    private List<ProductImage> productImageList;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="product_id")
+    private List<Price> priceList;
 
     @Column(name = "updatetimestamp")
     private Date updateTimestamp;

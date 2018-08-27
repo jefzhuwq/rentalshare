@@ -1,10 +1,86 @@
-<html>
-<head>
-    <title>First Web Application</title>
-</head>
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: copy"></head>
 <body>
-<form method="post">
-    Edit product
-</form>
+
+<!-- header -->
+<div th:replace="fragments/header :: copy"></div>
+
+
+<div class="container">
+    <form th:action="@{/edit_product}" th:object="${product}" method="POST">
+        <input type="hidden" th:field="*{id}" />
+        <div class="form-group row">
+            <div class="col-md-4" th:each="productImage, i : ${product.productImageList}">
+                <div class="thumbnail">
+                    <img th:src="${productImage.imagePath}" alt="" style="width:100%">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="PostingTitle" class="col-2 col-form-label">Post Title</label>
+            <div class="col-10">
+                <span id="PostingTitle" th:text="*{productName}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="Location" class="col-2 col-form-label">Location</label>
+            <div class="col-10">
+                <span name="Location" tabindex="1" id="Location" th:text="*{location}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="postal_code" class="col-2 col-form-label">Postal Code</label>
+            <div class="col-10">
+                <span name="postal" id="postal_code" th:text="*{zipCode}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="category" class="col-2 col-form-label">Category</label>
+            <div class="col-10">
+                <span th:field="*{category}" id="category" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="PostingBody" class="col-2 col-form-label">Telephone</label>
+            <div class="col-10">
+                <span name="PostingBody" id="PostingBody" th:text="*{productDescription}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-10">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Period Type</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="price : ${product.priceList}">
+                        <td th:text="${price.id}"></td>
+                        <td th:text="${price.unitPrice}"></td>
+                        <td th:text="${price.periodType}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+
+<!--==========Footer area==========-->
+<footer th:replace="fragments/footer :: copy"></footer>
+<!--==========End Footer area==========-->
+
+<div th:replace="fragments/js :: copy"></div>
+
+
 </body>
 </html>
