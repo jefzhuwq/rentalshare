@@ -2,6 +2,7 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: copy"></head>
+
 <body>
 
 <!-- header -->
@@ -12,7 +13,7 @@
     <form th:action="@{/edit_product}" th:object="${product}" method="POST">
         <input type="hidden" th:field="*{id}" />
         <div class="form-group row">
-            <div class="col-md-4" th:each="productImage, i : ${product.productImageList}">
+            <div class="col-md-4" th:each="productImage, i : ${productImageList}">
                 <div class="thumbnail">
                     <img th:src="${productImage.imagePath}" alt="" style="width:100%">
                 </div>
@@ -59,7 +60,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="price : ${product.priceList}">
+                    <tr th:each="price : ${priceList}">
                         <td th:text="${price.id}"></td>
                         <td th:text="${price.unitPrice}"></td>
                         <td th:text="${price.periodType}"></td>
@@ -69,10 +70,29 @@
             </div>
         </div>
     </form>
+    <form th:action="@{/rent_product}" method="POST">
+        <div class="form-group row">
+            <div class="col-10">
+                <div style="overflow:hidden;">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div id="datetimepicker12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" th:value="${product.id}" name="productId" />
+                <input type="hidden" name="startDate" id="startDate">
+                <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+            </div>
+        </div>
+    </form>
 </div>
 
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+
+
 
 
 <!--==========Footer area==========-->
@@ -81,6 +101,27 @@
 
 <div th:replace="fragments/js :: copy"></div>
 
+<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    var disabledDateList = /*[[${disabledDateList}]]*/ "default";
+    /*]]>*/
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker12').datetimepicker({
+            inline: true,
+            sideBySide: true,
+            format: 'L',
+            disabledDates: disabledDateList
+        }).on("dp.change", function (e) {
+            $('#startDate').val(e.date.format());
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -7,33 +7,38 @@
 <!-- header -->
 <div th:replace="~{fragments/header :: copy}"></div>
 
-
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Manage</th>
-        <th scope="col">Product Title</th>
-        <th scope="col">Category</th>
-        <th scope="col">Last Update Time</th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr th:each="product : ${productList}">
-            <div th:if="${product.isActive} == 1">
-                <td th:text="${product.id}"></td>
-                <td>
-                    <a th:href="@{'/delete_product/' + ${product.id}}">delete</a>
-                    <a th:href="@{'/edit_product/' + ${product.id}}">edit</a>
-                </td>
-                <td th:text="${product.productName}"></td>
-                <td th:text="${product.category.categoryName}"></td>
-                <!--<td th:text="${product.updatetimestamp}"></td>-->
-            </div>
-        </tr>
-    </tbody>
-</table>
-
+<div class="container">
+    <p><h2>Product List</h2></p>
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Manage</th>
+                <th scope="col">Product Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Last Update Time</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${productList}">
+                    <div th:if="${product.isActive} == 1">
+                        <td th:text="${product.id}"></td>
+                        <td>
+                            <a th:href="@{'/delete_product/' + ${product.id}}">delete</a>
+                            <a th:href="@{'/edit_product/' + ${product.id}}">edit</a>
+                        </td>
+                        <td th:text="${product.productName}"></td>
+                        <td th:text="${product.category.categoryName}"></td>
+                        <!--<td th:text="${product.updatetimestamp}"></td>-->
+                    </div>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
 
 
 <!--==========Footer area==========-->

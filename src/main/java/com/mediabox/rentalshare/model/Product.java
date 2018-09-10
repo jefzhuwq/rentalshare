@@ -34,13 +34,17 @@ public class Product {
     @Column(name = "createtimestamp")
     private Date createTimestamp;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="product_id")
-    private List<ProductImage> productImageList;
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name="product_id")
+//    private List<ProductImage> productImageList;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="product_id")
-    private List<Price> priceList;
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name="product_id")
+//    private List<Price> priceList;
+
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name="product_id")
+//    private List<RentalRequest> rentalRequestList;
 
     @Column(name = "updatetimestamp")
     private Date updateTimestamp;

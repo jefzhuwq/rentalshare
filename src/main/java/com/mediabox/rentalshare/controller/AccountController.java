@@ -7,10 +7,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.mediabox.rentalshare.model.Price;
-import com.mediabox.rentalshare.model.Product;
-import com.mediabox.rentalshare.model.ProductImage;
+import com.mediabox.rentalshare.model.*;
 import com.mediabox.rentalshare.repository.*;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +45,9 @@ public class AccountController {
 
     @Autowired
     ProductImageRepository productImageRepository;
+
+    @Autowired
+    RentalRequestRepository rentalRequestRepository;
 
     @RequestMapping(value = "/my_account", method = RequestMethod.GET)
     public ModelAndView myAccount() {
@@ -208,6 +210,30 @@ public class AccountController {
     }
 
 
+    @RequestMapping(value = "/rent_product", method = RequestMethod.POST)
+    public ModelAndView rentProduct(HttpServletRequest request) {
+        String productId = request.getParameter("productId");
+        Product product = productRepository.findById(Integer.parseInt(productId)).get();
+        ModelAndView mav = new ModelAndView("redirect:/view_product/" + productId);
+        if (product != null) {
+            Date date = DateTime.parse(request.getParameter("startDate")).toDate();
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName(); //get logged in username
+            User user = userRepository.findByEmail(name);
+
+            RentalRequest rentalRequest = new RentalRequest();
+
+            rentalRequest.setProduct(product);
+            rentalRequest.setRequester(user);
+            rentalRequest.setCreateTimestamp(new Date());
+            rentalRequest.setUpdateTimestamp(new Date());
+            rentalRequest.setStartDate(date);
+
+            rentalRequestRepository.save(rentalRequest);
+        }
+        return mav;
+    }
 
     @PostMapping("/upload")
     public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, HttpServletRequest request) {
