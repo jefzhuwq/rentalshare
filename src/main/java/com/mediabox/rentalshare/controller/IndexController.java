@@ -1,17 +1,40 @@
 package com.mediabox.rentalshare.controller;
 
-import com.mediabox.rentalshare.model.Product;
-import com.mediabox.rentalshare.model.User;
+import com.mediabox.rentalshare.model.*;
+import com.mediabox.rentalshare.repository.PriceRepository;
+import com.mediabox.rentalshare.repository.ProductImageRepository;
+import com.mediabox.rentalshare.repository.ProductRepository;
+import com.mediabox.rentalshare.repository.RentalRequestRepository;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 @Controller
 public class IndexController {
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    RentalRequestRepository rentalRequestRepository;
+
+    @Autowired
+    ProductImageRepository productImageRepository;
+
+    @Autowired
+    PriceRepository priceRepository;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
@@ -52,8 +75,31 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/search_result", method = RequestMethod.GET)
-    public ModelAndView searchResult() {
+    public ModelAndView searchResult(@RequestParam("keyword") String keyword) {
         ModelAndView mav = new ModelAndView("search_result");
+        List<Product> productList = this.search(keyword);
+        mav.addObject("productList", productList);
+        return mav;
+    }
+
+    private List<Product> search(String keyword) {
+        List<Product> productList = productRepository.searchByKeyword(keyword);
+        return productList;
+    }
+
+    @RequestMapping(value = "/view_product/{id}", method = RequestMethod.GET)
+    public ModelAndView editProduct(@PathVariable("id") int id) {
+        ModelAndView mav = new ModelAndView("/product/view");
+        Product product = productRepository.findById(id).get();
+        mav.addObject("product", product);
+        mav.addObject("productImageList", productImageRepository.findByProduct(product));
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByProduct(product);
+        mav.addObject("rentalRequestList", rentalRequestList);
+        mav.addObject("priceList", priceRepository.findByProduct(product));
+
+        List<String> disabledDateList = new ArrayList<>();
+        rentalRequestList.forEach(obj -> disabledDateList.add(String.valueOf(obj.getStartDate())));
+        mav.addObject("disabledDateList", disabledDateList);
         return mav;
     }
 
@@ -72,6 +118,7 @@ public class IndexController {
     @RequestMapping(value = "/contact", method = RequestMethod.GET)
     public ModelAndView contact() {
         ModelAndView mav = new ModelAndView("contact");
+        mav.addObject("contactUs", new ContactUs());
         return mav;
     }
 
@@ -86,6 +133,12 @@ public class IndexController {
     @RequestMapping(value = "/access_denied", method = RequestMethod.GET)
     public ModelAndView accessDenied() {
         ModelAndView mav = new ModelAndView("/access_denied");
+        return mav;
+    }
+
+    @RequestMapping(value = "/calendar", method = RequestMethod.GET)
+    public ModelAndView calendar() {
+        ModelAndView mav = new ModelAndView("/calendar");
         return mav;
     }
 }

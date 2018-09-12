@@ -31,18 +31,20 @@
                 </div>
             </div>
             <div class="col-md-7">
-                <div class="find_item_inner">
-                    <input type="text" placeholder="Search Here">
-                    <!--<p th:each="category : ${@categoryService.allCategories()}"-->
-                       <!--th:text="${category.categoryName}">A Smoke Test</p>-->
-                    <!--<div th:text="${@categoryService.allCategories()}">...</div>-->
-                    <select class="selectpicker">
-                        <option>All Categories</option>
-                        <option>All Categories</option>
-                        <option>All Categories</option>
-                    </select>
-                    <a class="find_button" href="#">Find Items</a>
-                </div>
+                <form th:action="@{/search_result}" method="get">
+                    <div class="find_item_inner">
+                        <input type="text" placeholder="Search Here" id="keyword" name="keyword">
+                        <!--<p th:each="category : ${@categoryService.allCategories()}"-->
+                           <!--th:text="${category.categoryName}">A Smoke Test</p>-->
+                        <!--<div th:text="${@categoryService.allCategories()}">...</div>-->
+                        <select class="selectpicker">
+                            <option>All Categories</option>
+                            <option>All Categories</option>
+                            <option>All Categories</option>
+                        </select>
+                        <input type="submit" class="find_button" />
+                    </div>
+                </form>
             </div>
             <div class="col-md-2">
                 <div class="cart_area">

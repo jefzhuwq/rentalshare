@@ -7,23 +7,30 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "product_image")
-public class ProductImage {
-
+@Table(name="rental_request")
+public class RentalRequest {
+	
     @Id
-    @Column(name = "product_image_id")
+    @Column(name="request_id")
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "image_path")
-    private String imagePath;
+    @Column(name = "start_date")
+    private Date startDate;
+
+    @Column(name = "end_date")
+    private Date endDate;
+
+    @Column(name = "status")
+    private Integer status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="product_id")
     private Product product;
 
-    @Column(name = "is_primary")
-    private Boolean isPrimary;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User requester;
 
     @Column(name = "createtimestamp")
     private Date createTimestamp;

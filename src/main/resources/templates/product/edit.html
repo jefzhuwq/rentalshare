@@ -61,13 +61,13 @@
         <div class="form-group row">
             <label for="Location" class="col-2 col-form-label">Location</label>
             <div class="col-10">
-                <input class="form-control" type="text" name="Location" value="" tabindex="1" id="Location" maxlength="80" placeholder="Location">
+                <input class="form-control" type="text" name="location" value="" tabindex="1" id="Location" maxlength="80" placeholder="Location" th:field="*{location}">
             </div>
         </div>
         <div class="form-group row">
-            <label for="postal_code" class="col-2 col-form-label">Postal Code</label>
+            <label for="zipCode" class="col-2 col-form-label">Zip Code</label>
             <div class="col-10">
-                <input class="form-control" type="text" name="postal" value="" tabindex="1" id="postal_code" maxlength="15" placeholder="Postal code">
+                <input class="form-control" type="text" name="zipCode" value="" tabindex="1" id="zipCode" maxlength="15" placeholder="Zip code" th:field="*{zipCode}">
             </div>
         </div>
         <div class="form-group row">
