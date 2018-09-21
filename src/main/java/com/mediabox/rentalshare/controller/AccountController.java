@@ -26,7 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
 
@@ -49,17 +51,103 @@ public class AccountController {
     @Autowired
     RentalRequestRepository rentalRequestRepository;
 
+    @Autowired
+    FavoriteRepository favoriteRepository;
+
     @RequestMapping(value = "/my_account", method = RequestMethod.GET)
     public ModelAndView myAccount() {
         ModelAndView mav = new ModelAndView("/account/my_account");
         return mav;
     }
 
+    @RequestMapping(value = "/my_favorite", method = RequestMethod.GET)
+    public ModelAndView myFavorite() {
+        ModelAndView mav = new ModelAndView("/account/my_favorite");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        List<Favorite> favoriteList = favoriteRepository.findByUser(userRepository.findByEmail(name));
+        mav.addObject("favoriteList", favoriteList);
+
+        Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
+        Map<Integer, List<Price>> priceMap = new HashMap<>();
+        for (Favorite favorite : favoriteList) {
+            productImageMap.put(favorite.getProduct().getId(), productImageRepository.findByProduct(favorite.getProduct()));
+            priceMap.put(favorite.getProduct().getId(), priceRepository.findByProduct(favorite.getProduct()));
+        }
+        mav.addObject("productImageMap", productImageMap);
+        mav.addObject("priceMap", priceMap);
+        return mav;
+    }
+
+    @RequestMapping(value = "/add_to_favorite", method = RequestMethod.POST)
+    public ModelAndView addToFavorite(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/my_favorite");
+        Favorite favorite = new Favorite();
+        String productId = request.getParameter("productId");
+        ModelAndView mav = new ModelAndView("redirect:/edit_product/" + productId);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        Product product = productRepository.findById(Integer.parseInt(productId)).get();
+
+        favorite.setProduct(product);
+        favorite.setCreateTimestamp(new Date());
+        favorite.setUpdateTimestamp(new Date());
+
+        favorite.setUser(userRepository.findByEmail(name));
+
+        favoriteRepository.save(favorite);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/my_schedule", method = RequestMethod.GET)
+    public ModelAndView mySchedule() {
+        ModelAndView mav = new ModelAndView("/account/my_schedule");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(name));
+        mav.addObject("productList", productList);
+
+        if (productList.size()>0) {
+            List<RentalRequest> rentalRequestList = rentalRequestRepository.findByProduct(productList.get(0));
+            mav.addObject("rentalRequestList", rentalRequestList);
+        }
+        return mav;
+    }
+
+    @RequestMapping(value = "/my_schedule", method = RequestMethod.POST)
+    public ModelAndView selectProductSchedule(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("/account/my_schedule");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        String selectedProductId = request.getParameter("select_product");
+        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(name));
+        mav.addObject("productList", productList);
+        mav.addObject("selectedProductId", selectedProductId);
+
+        for (Product product: productList) {
+            if (product.getId().equals(Integer.parseInt(selectedProductId))) {
+                List<RentalRequest> rentalRequestList = rentalRequestRepository.findByProduct(product);
+                mav.addObject("rentalRequestList", rentalRequestList);
+                break;
+            }
+        }
+        return mav;
+    }
+
     @RequestMapping(value = "/post_product", method = RequestMethod.POST)
     public ModelAndView createNewProduct(@ModelAttribute Product product) {
-        ModelAndView modelAndView = new ModelAndView("/index");
+        ModelAndView modelAndView = new ModelAndView("redirect:/product_list");
         product.setCreateTimestamp(new Date());
         product.setUpdateTimestamp(new Date());
+        product.setIsActive(1);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
@@ -213,6 +301,7 @@ public class AccountController {
     @RequestMapping(value = "/rent_product", method = RequestMethod.POST)
     public ModelAndView rentProduct(HttpServletRequest request) {
         String productId = request.getParameter("productId");
+        String shippingOptionValue = request.getParameter("shippingOption");
         Product product = productRepository.findById(Integer.parseInt(productId)).get();
         ModelAndView mav = new ModelAndView("redirect:/view_product/" + productId);
         if (product != null) {
@@ -229,6 +318,7 @@ public class AccountController {
             rentalRequest.setCreateTimestamp(new Date());
             rentalRequest.setUpdateTimestamp(new Date());
             rentalRequest.setStartDate(date);
+            rentalRequest.setShippingOption(Integer.parseInt(shippingOptionValue));
 
             rentalRequestRepository.save(rentalRequest);
         }

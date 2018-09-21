@@ -3,95 +3,209 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: copy"></head>
 
+<style>
+    ul > li{margin-right:25px;font-weight:lighter;cursor:pointer}
+    li.active{border-bottom:3px solid silver;}
+
+    .item-photo{display:flex;justify-content:center;align-items:center;border-right:1px solid #f6f6f6;}
+    .menu-items{list-style-type:none;font-size:11px;display:inline-flex;margin-bottom:0;margin-top:20px}
+    .btn-success{width:100%;border-radius:0;}
+    .section{width:100%;margin-left:-15px;padding:2px;padding-left:15px;padding-right:15px;background:#f8f9f9}
+    .title-price{margin-top:30px;margin-bottom:0;color:black}
+    .title-attr{margin-top:0;margin-bottom:0;color:black;}
+    .btn-minus{cursor:pointer;font-size:7px;display:flex;align-items:center;padding:5px;padding-left:10px;padding-right:10px;border:1px solid gray;border-radius:2px;border-right:0;}
+    .btn-plus{cursor:pointer;font-size:7px;display:flex;align-items:center;padding:5px;padding-left:10px;padding-right:10px;border:1px solid gray;border-radius:2px;border-left:0;}
+    div.section > div {width:100%;display:inline-flex;}
+    div.section > div > input {margin:0;padding-left:5px;font-size:10px;padding-right:5px;max-width:18%;text-align:center;}
+    .attr,.attr2{cursor:pointer;margin-right:5px;height:20px;font-size:10px;padding:2px;border:1px solid gray;border-radius:2px;}
+    .attr.active,.attr2.active{ border:1px solid orange;}
+
+    @media (max-width: 426px) {
+        .container {margin-top:0px !important;}
+        .container > .row{padding:0 !important;}
+        .container > .row > .col-xs-12.col-sm-5{
+            padding-right:0 ;
+        }
+        .container > .row > .col-xs-12.col-sm-9 > div > p{
+            padding-left:0 !important;
+            padding-right:0 !important;
+        }
+        .container > .row > .col-xs-12.col-sm-9 > div > ul{
+            padding-left:10px !important;
+
+        }
+        .section{width:104%;}
+        .menu-items{padding-left:0;}
+    }
+
+
+    h4 {
+        margin: 20px 10px 10px;
+    }
+    p {
+        margin: 10px;
+    }
+
+    #carousel-custom {
+        margin: 20px auto;
+        width: 600px;
+    }
+    #carousel-custom .carousel-indicators {
+        margin: 10px 0 0;
+        overflow: auto;
+        position: static;
+        text-align: left;
+        white-space: nowrap;
+        width: 100%;
+    }
+    #carousel-custom .carousel-indicators li {
+        background-color: transparent;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        display: inline-block;
+        height: auto;
+        margin: 0 !important;
+        width: auto;
+    }
+    #carousel-custom .carousel-indicators li img {
+        display: block;
+        opacity: 0.5;
+    }
+    #carousel-custom .carousel-indicators li.active img {
+        opacity: 1;
+    }
+    #carousel-custom .carousel-indicators li:hover img {
+        opacity: 0.75;
+    }
+    #carousel-custom .carousel-outer {
+        position: relative;
+    }
+
+</style>
+
 <body>
 
 <!-- header -->
 <div th:replace="fragments/header :: copy"></div>
 
 
+
 <div class="container">
-    <form th:action="@{/edit_product}" th:object="${product}" method="POST">
-        <input type="hidden" th:field="*{id}" />
-        <div class="form-group row">
-            <div class="col-md-4" th:each="productImage, i : ${productImageList}">
-                <div class="thumbnail">
-                    <img th:src="${productImage.imagePath}" alt="" style="width:100%">
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="PostingTitle" class="col-2 col-form-label">Post Title</label>
-            <div class="col-10">
-                <span id="PostingTitle" th:text="*{productName}" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="Location" class="col-2 col-form-label">Location</label>
-            <div class="col-10">
-                <span name="Location" tabindex="1" id="Location" th:text="*{location}" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="postal_code" class="col-2 col-form-label">Postal Code</label>
-            <div class="col-10">
-                <span name="postal" id="postal_code" th:text="*{zipCode}" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="category" class="col-2 col-form-label">Category</label>
-            <div class="col-10">
-                <span th:field="*{category}" id="category" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="PostingBody" class="col-2 col-form-label">Telephone</label>
-            <div class="col-10">
-                <span name="PostingBody" id="PostingBody" th:text="*{productDescription}" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-10">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Period Type</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="price : ${priceList}">
-                        <td th:text="${price.id}"></td>
-                        <td th:text="${price.unitPrice}"></td>
-                        <td th:text="${price.periodType}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </form>
-    <form th:action="@{/rent_product}" method="POST">
-        <div class="form-group row">
-            <div class="col-10">
-                <div style="overflow:hidden;">
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div id="datetimepicker12"></div>
+    <div class="row">
+
+            <div class="col-xs-5 item-photo">
+                <div id='carousel-custom' class='carousel slide' data-ride='carousel'>
+                    <div class='carousel-outer'>
+                        <!-- Wrapper for slides -->
+                        <div class='carousel-inner'>
+
+                            <div th:class="'item' + ${i.index==0 ? ' active' : ''}" th:each="productImage, i : ${productImageList}">
+                                <img  th:src="${productImage.imagePath}">
                             </div>
                         </div>
+
+                        <!-- Controls -->
+                        <a class='left carousel-control' href='#carousel-custom' data-slide='prev'>
+                            <span class='glyphicon glyphicon-chevron-left'></span>
+                        </a>
+                        <a class='right carousel-control' href='#carousel-custom' data-slide='next'>
+                            <span class='glyphicon glyphicon-chevron-right'></span>
+                        </a>
+                    </div>
+
+                    <!-- Indicators -->
+                    <ol class='carousel-indicators mCustomScrollbar'>
+                        <li data-target='#carousel-custom' th:data-slide-to="${i.index}" th:class="${i.index==0 ? 'active' : ''}" th:each="productImage, i : ${productImageList}">
+                            <img style="width:100px;height:50px;" th:src="${productImage.imagePath}" alt='' />
+                        </li>
+                    </ol>
+                </div>
+
+
+
+
+            </div>
+            <div class="col-xs-6" style="border:0px solid gray; margin:10px">
+                <h3><span id="PostingTitle" th:text="${product.productName}" /></h3>
+
+                <h6 class="title-price"><small>PRICE</small></h6>
+                <h3 style="margin-top:0px;">
+                    <div th:each="price : ${priceList}">
+                        <span th:text="'$' + ${price.unitPrice}"></span>
+                        <span th:text="${T(com.mediabox.rentalshare.model.PeriodType).getTextByValue(price.periodType)}"></span>
+                    </div>
+                </h3>
+
+                <div class="section">
+                    <h6 class="title-attr" style="margin-top:15px;" ><small>LOCATION</small></h6>
+                    <div>
+                        <span name="Location" tabindex="1" id="Location" th:text="${product.location}" />
                     </div>
                 </div>
-                <input type="hidden" th:value="${product.id}" name="productId" />
-                <input type="hidden" name="startDate" id="startDate">
-                <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+                <div class="section" style="padding-bottom:5px;">
+                    <h6 class="title-attr"><small>ZIP CODE</small></h6>
+                    <div>
+                        <span name="postal" id="postal_code" th:text="${product.zipCode}" />
+                    </div>
+                </div>
+                <div class="section" style="padding-bottom:20px;">
+                    <h6 class="title-attr"><small>CATEGORY</small></h6>
+                    <div>
+                        <span th:text="${product.category.categoryName}" id="category" />
+                    </div>
+                </div>
+
+                <div class="section" style="padding-bottom:20px;">
+
+                    <h6 class="title-attr"><small>AVAILABILITY</small></h6>
+                    <div>
+                        <div class="col-md-12" id="datetimepicker12"></div>
+                    </div>
+                </div>
+                <form th:action="@{/rent_product}" id="formRentProduct" method="post">
+                    <div class="section" style="padding-bottom:20px;">
+                        <h6 class="title-attr"><small>SHIPPING OPTION</small></h6>
+                        <div>
+                            <select name="shippingOption" id="shippingOption">
+                                <option th:each="shippingOption, i : ${T(com.mediabox.rentalshare.model.ShippingOption).values()}" th:value="${shippingOption.getValue()}" th:text="${shippingOption.getText()}" />
+                            </select>
+
+                            <!--<div class="row" th:each="shippingOption, i : ${T(com.mediabox.rentalshare.model.ShippingOption).values()}">-->
+                                <!--<div class="checkbox col-md-12">-->
+                                    <!--<label><input type="checkbox" th:value="${shippingOption.getValue()}">-->
+                                        <!--<span th:text="${shippingOption.getText()}" />-->
+                                    <!--</label>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                    </div>
+                    <div class="section" style="padding-bottom:20px;">
+                            <input type="hidden" th:value="${product.id}" name="productId" />
+                            <input type="hidden" name="startDate" id="startDate">
+                            <input type="submit" value="Submit Rent" class="btn btn-success" />
+
+                        <!--<h6>-->
+                            <!--<a href="#"><span class="glyphicon glyphicon-heart-empty" style="cursor:pointer;"></span> Submit</a>-->
+                        <!--</h6>-->
+                    </div>
+                </form>
             </div>
-        </div>
-    </form>
+
+            <div class="col-xs-12">
+                <ul class="menu-items">
+                    <li class="active"><h3>Description</h3></li>
+                    <!--<li>Tab2</li>-->
+                    <!--<li>Tab3</li>-->
+                    <!--<li>Tab4</li>-->
+                </ul>
+                <div style="width:100%;border-top:1px solid silver">
+                    <p style="padding:15px;">
+                        <span name="PostingBody" id="PostingBody" th:text="${product.productDescription}" />
+                    </p>
+                </div>
+            </div>
+    </div>
 </div>
-
-
-
 
 
 
@@ -101,8 +215,6 @@
 
 <div th:replace="fragments/js :: copy"></div>
 
-<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
-<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
 
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
@@ -121,6 +233,43 @@
             $('#startDate').val(e.date.format());
         });
     });
+
+    $(document).ready(function(){
+
+        // $(".mCustomScrollbar").mCustomScrollbar({axis:"x"});
+
+        //-- Click on detail
+        $("ul.menu-items > li").on("click",function(){
+            $("ul.menu-items > li").removeClass("active");
+            $(this).addClass("active");
+        })
+
+        $(".attr,.attr2").on("click",function(){
+            var clase = $(this).attr("class");
+
+            $("." + clase).removeClass("active");
+            $(this).addClass("active");
+        })
+
+        //-- Click on QUANTITY
+        // $(".btn-minus").on("click",function(){
+        //     var now = $(".section > div > input").val();
+        //     if ($.isNumeric(now)){
+        //         if (parseInt(now) -1 > 0){ now--;}
+        //         $(".section > div > input").val(now);
+        //     }else{
+        //         $(".section > div > input").val("1");
+        //     }
+        // })
+        // $(".btn-plus").on("click",function(){
+        //     var now = $(".section > div > input").val();
+        //     if ($.isNumeric(now)){
+        //         $(".section > div > input").val(parseInt(now)+1);
+        //     }else{
+        //         $(".section > div > input").val("1");
+        //     }
+        // })
+    })
 </script>
 
 </body>

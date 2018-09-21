@@ -48,9 +48,12 @@
 <!-- header -->
 <div th:replace="fragments/header :: copy"></div>
 
-
 <div class="container">
-    <form th:action="@{/edit_product}" th:object="${product}" method="POST">
+    <p></p>
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Edit Post</b></div>
+        <div class="panel-body">
+            <form style="margin:10px;" th:action="@{/edit_product}" th:object="${product}" method="POST">
         <input type="hidden" th:field="*{id}" />
         <div class="form-group row">
             <label for="PostingTitle" class="col-2 col-form-label">Post Title</label>
@@ -81,7 +84,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="PostingBody" class="col-2 col-form-label">Telephone</label>
+            <label for="PostingBody" class="col-2 col-form-label">Description</label>
             <div class="col-10">
                 <textarea class="form-control" name="PostingBody" placeholder="" tabindex="1" id="PostingBody" th:field="*{productDescription}" rows="10" />
             </div>
@@ -89,48 +92,60 @@
         <div class="form-group row">
             <div class="col-10">
                 <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+                <a href="/product_list" class="btn btn-lg btn-default">Back</a>
             </div>
         </div>
     </form>
-    <div class="form-group row">
-        <div class="col-10">
-            <button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-lg btn-primary">Add Price</button>
         </div>
     </div>
-    <div class="form-group row">
-        <div class="col-10">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Manage</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Period Type</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="price : ${priceList}">
-                    <td th:text="${price.id}"></td>
-                    <td>
-                        <a th:href="@{'/delete_price/' + ${price.id}}" class="btn btn-sm">Delete</a>
-                    </td>
-                    <td th:text="${price.unitPrice}"></td>
-                    <td th:text="${price.periodType}"></td>
-                </tr>
-                </tbody>
-            </table>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Edit Price</b></div>
+        <div class="panel-body">
+            <div style="margin: 10px;" class="form-group row">
+                <div class="col-10">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Price</th>
+                            <th scope="col">Period Type</th>
+                            <th scope="col">Manage</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="price : ${priceList}">
+                            <td th:text="${price.unitPrice}"></td>
+                            <td th:text="${T(com.mediabox.rentalshare.model.PeriodType).getTextByValue(price.periodType)}"></td>
+                            <td>
+                                <a th:href="@{'/delete_price/' + ${price.id}}" class="btn btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="margin: 10px;" class="form-group row">
+                <div class="col-10">
+                    <button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-lg btn-primary">Add Price</button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="form-group row">
-        <div class="col-10">
-            <form method="POST" action="/upload" enctype="multipart/form-data">
-                <input type="hidden" th:value="${product.id}" name="productId" />
-                <input type="file" name="file" />
-                <input type="submit" value="Submit" class="btn btn-primary" />
-            </form>
-        </div>
-    </div>
-    <div class="form-group row">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Edit Picture</b></div>
+        <div class="panel-body">
+            <div style="margin: 10px;" class="form-group row">
+                <div class="col-10">
+                    <form method="POST" action="/upload" enctype="multipart/form-data">
+                        <input type="hidden" th:value="${product.id}" name="productId" />
+                        <input type="file" name="file" />
+                        <p></p>
+                        <input type="submit" value="Upload" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+            <div style="margin: 10px;" class="form-group row">
         <div class="col-md-4" th:each="productImage, i : ${productImageList}">
             <div class="thumbnail">
                 <a href="/w3images/lights.jpg">
@@ -140,6 +155,8 @@
                     </div>
                 </a>
             </div>
+        </div>
+    </div>
         </div>
     </div>
 </div>

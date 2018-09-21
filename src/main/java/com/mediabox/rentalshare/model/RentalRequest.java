@@ -28,6 +28,9 @@ public class RentalRequest {
     @JoinColumn(name="product_id")
     private Product product;
 
+    @Column(name = "shipping_option")
+    private Integer shippingOption;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User requester;

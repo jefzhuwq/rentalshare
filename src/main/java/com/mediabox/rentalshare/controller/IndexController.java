@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.print.DocFlavor;
+import java.util.*;
 
 
 @Controller
@@ -79,6 +78,14 @@ public class IndexController {
         ModelAndView mav = new ModelAndView("search_result");
         List<Product> productList = this.search(keyword);
         mav.addObject("productList", productList);
+        Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
+        Map<Integer, List<Price>> priceMap = new HashMap<>();
+        for (Product product : productList) {
+            productImageMap.put(product.getId(), productImageRepository.findByProduct(product));
+            priceMap.put(product.getId(), priceRepository.findByProduct(product));
+        }
+        mav.addObject("productImageMap", productImageMap);
+        mav.addObject("priceMap", priceMap);
         return mav;
     }
 

@@ -7,43 +7,54 @@
 <!-- header -->
 <div th:replace="fragments/header :: copy"></div>
 
-<form th:action="@{/post_product}" th:object="${product}" method="POST">
 <div class="container">
-    <div class="row">
-        <div class="col-md-3">
-            posting title
-            <input type="text" name="PostingTitle" value="" tabindex="1" id="PostingTitle" th:field="*{productName}" maxlength="70">
-        </div>
-        <div class="col-md-3">
-            specific location
-            <input type="text" name="GeographicArea" value="" tabindex="1" id="GeographicArea" maxlength="80">
-        </div>
-        <div class="col-md-3">
-            postal code
-            <input type="text" name="postal" value="" tabindex="1" id="postal_code" maxlength="15">
-        </div>
-        <div class="col-md-3">
-            category
-            <select class="selectpicker" th:field="*{category}">
-                <option th:value="1">cat1</option>
-                <option th:value="2">cat2</option>
-                <option th:value="3">cat3</option>
-            </select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-            posting body
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <textarea name="PostingBody" placeholder="" tabindex="1" id="PostingBody" th:field="*{productDescription}" rows="10"></textarea>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+    <p></p>
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Create Post</b></div>
+        <div class="panel-body">
+            <form style="margin:10px;" th:action="@{/post_product}" th:object="${product}" method="POST">
+                <input type="hidden" th:field="*{id}" />
+                <div class="form-group row">
+                    <label for="PostingTitle" class="col-2 col-form-label">Post Title</label>
+                    <div class="col-10">
+                        <input class="form-control" type="text" name="PostingTitle" value="" tabindex="1" id="PostingTitle" th:field="*{productName}" maxlength="70" placeholder="Posting title">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="Location" class="col-2 col-form-label">Location</label>
+                    <div class="col-10">
+                        <input class="form-control" type="text" name="location" value="" tabindex="1" id="Location" maxlength="80" placeholder="Location" th:field="*{location}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="zipCode" class="col-2 col-form-label">Zip Code</label>
+                    <div class="col-10">
+                        <input class="form-control" type="text" name="zipCode" value="" tabindex="1" id="zipCode" maxlength="15" placeholder="Zip code" th:field="*{zipCode}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="category" class="col-2 col-form-label">Category</label>
+                    <div class="col-10">
+                        <select class="selectpicker" th:field="*{category}" id="category">
+                            <option th:value="1">cat1</option>
+                            <option th:value="2">cat2</option>
+                            <option th:value="3">cat3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="PostingBody" class="col-2 col-form-label">Description</label>
+                    <div class="col-10">
+                        <textarea class="form-control" name="PostingBody" placeholder="" tabindex="1" id="PostingBody" th:field="*{productDescription}" rows="10" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-10">
+                        <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+                        <a href="/product_list" class="btn btn-lg btn-default">Back</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

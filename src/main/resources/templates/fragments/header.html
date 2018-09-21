@@ -37,26 +37,28 @@
                         <!--<p th:each="category : ${@categoryService.allCategories()}"-->
                            <!--th:text="${category.categoryName}">A Smoke Test</p>-->
                         <!--<div th:text="${@categoryService.allCategories()}">...</div>-->
-                        <select class="selectpicker">
-                            <option>All Categories</option>
-                            <option>All Categories</option>
-                            <option>All Categories</option>
-                        </select>
-                        <input type="submit" class="find_button" />
+                        <!--<select class="selectpicker">-->
+                            <!--<option>All Categories</option>-->
+                            <!--<option>All Categories</option>-->
+                            <!--<option>All Categories</option>-->
+                        <!--</select>-->
+                        <input type="submit" class="btn btn-lg btn-primary" style="width: 150px" />
                     </div>
                 </form>
             </div>
             <div class="col-md-2">
                 <div class="cart_area">
                     <div class="wishlist">
-                        <i class="lnr lnr-heart"></i>
-                        <h5>Wishlist</h5>
+                        <a href="/my_favorite">
+                            <i class="lnr lnr-heart"></i>
+                            <h5>Wishlist</h5>
+                        </a>
                     </div>
                     <div class="cart">
                         <a href="/cart">
                             <i class="lnr lnr-cart"></i>
                             <h5>Cart</h5>
-                            <span>7</span>
+                            <!--<span></span>-->
                         </a>
                     </div>
                 </div>

@@ -392,7 +392,6 @@ body, p, h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid #e7ebf1;
   border-right: 0px;
   line-height: 48px;
-  background: #fff;
   padding: 0px 10px 0 18px;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
@@ -421,11 +420,11 @@ body, p, h1, h2, h3, h4, h5, h6 {
   font-size: 16px;
   font-family: "Roboto", sans-serif;
 }
-.find_item_inner .find_button {
-  position: relative;
-  top: 2px;
-  left: -4px;
-}
+/*.find_item_inner .find_button {*/
+  /*position: relative;*/
+  /*top: 2px;*/
+  /*left: -4px;*/
+/*}*/
 
 /* End Logo Area
 ============================================================================================ */
@@ -585,21 +584,17 @@ body, p, h1, h2, h3, h4, h5, h6 {
 /*----------------------------------------------------*/
 /* Find Button css
 ============================================================================================ */
-.find_button {
-  background: #2c92e0;
-  line-height: 48px;
-  display: inline-block;
-  padding: 0 35px;
-  color: #fff;
-  font-size: 18px;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  transition: all 400ms linear 0s;
-}
-.find_button:hover {
-  background: #2883c9;
-  color: #fff;
-}
+/*.find_button {*/
+  /*background: #2c92e0;*/
+  /*line-height: 48px;*/
+  /*display: inline-block;*/
+  /*padding: 0 35px;*/
+  /*color: #fff;*/
+  /*font-size: 18px;*/
+  /*font-family: "Roboto", sans-serif;*/
+  /*font-weight: 500;*/
+  /*transition: all 400ms linear 0s;*/
+/*}*/
 
 /* End Find Button css
 ============================================================================================ */

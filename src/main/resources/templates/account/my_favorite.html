@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: copy"></head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header :: copy}"></div>
+
+<section class="men_clothing_area">
+    <div class="container custome_container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="men_clothing_tittle">
+                    <h2>Favorite List</h2>
+                </div>
+                <div class="men_clothing_product_inner row">
+                    <div class="col-md-4 col-xs-6" th:each="favorite, i : ${favoriteList}">
+                        <div class="men_clothing_product_item">
+                            <a class="men_item_image" th:href="@{'/view_product/' + ${favorite.product.id}}">
+                                <img th:src="${productImageMap.get(favorite.product.id).size()!=0 ? productImageMap.get(favorite.product.id)[0].imagePath : 'img/no-image-available.jpg'}" alt="">
+                            </a>
+                            <div class="men_item_content">
+                                <a href="#"><h3 th:text="${favorite.product.productName}" /></a>
+                                <h4 th:each="price : ${priceMap.get(product.id)}">
+                                    <span th:text="${T(com.mediabox.rentalshare.model.PeriodType).getTextByValue(price.periodType)}" /> :
+                                    <span th:text="'$'+ ${price.unitPrice}" />
+                                </h4>
+                                <div class="favourite_icon">
+                                    <a class="active" href="#"><i class="lnr lnr-cart"></i></a>
+                                    <a href="#"><i class="lnr lnr-heart"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--==========Footer area==========-->
+<footer th:replace="~{fragments/footer :: copy}"></footer>
+<!--==========End Footer area==========-->
+
+<div th:replace="~{fragments/js :: copy}"></div>
+
+</body>
+</html>
