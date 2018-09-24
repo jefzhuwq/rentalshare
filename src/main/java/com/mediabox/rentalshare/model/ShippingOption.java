@@ -16,7 +16,7 @@ public enum ShippingOption {
 
     public static String getTextByValue(int value) {
         for (ShippingOption shippingOption : values()) {
-            if(shippingOption.getValue() == value) {
+            if (shippingOption.getValue() == value) {
                 return shippingOption.getText();
             }
         }

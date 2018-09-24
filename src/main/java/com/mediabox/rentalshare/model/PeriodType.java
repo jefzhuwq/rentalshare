@@ -16,7 +16,7 @@ public enum PeriodType {
 
     public static String getTextByValue(int value) {
         for (PeriodType periodType : values()) {
-            if(periodType.getValue() == value) {
+            if (periodType.getValue() == value) {
                 return periodType.getText();
             }
         }

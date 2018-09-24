@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,10 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
 
@@ -78,6 +76,27 @@ public class AccountController {
         }
         mav.addObject("productImageMap", productImageMap);
         mav.addObject("priceMap", priceMap);
+        return mav;
+    }
+
+    @RequestMapping(value = "/my_order", method = RequestMethod.GET)
+    public ModelAndView myOrder() {
+        ModelAndView mav = new ModelAndView("/account/my_order");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUser(userRepository.findByEmail(name));
+        mav.addObject("rentalRequestList", rentalRequestList);
+
+//        Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
+//        Map<Integer, List<Price>> priceMap = new HashMap<>();
+//        for (Favorite favorite : favoriteList) {
+//            productImageMap.put(favorite.getProduct().getId(), productImageRepository.findByProduct(favorite.getProduct()));
+//            priceMap.put(favorite.getProduct().getId(), priceRepository.findByProduct(favorite.getProduct()));
+//        }
+//        mav.addObject("productImageMap", productImageMap);
+//        mav.addObject("priceMap", priceMap);
         return mav;
     }
 
@@ -304,8 +323,19 @@ public class AccountController {
         String shippingOptionValue = request.getParameter("shippingOption");
         Product product = productRepository.findById(Integer.parseInt(productId)).get();
         ModelAndView mav = new ModelAndView("redirect:/view_product/" + productId);
-        if (product != null) {
-            Date date = DateTime.parse(request.getParameter("startDate")).toDate();
+
+        String startDateString = request.getParameter("startDate");
+        String endDateString = request.getParameter("endDate");
+
+        if (product != null && !StringUtils.isEmpty(startDateString) && !StringUtils.isEmpty(endDateString)) {
+            Date startDate = DateTime.parse(startDateString).toDate();
+            Date endDate = DateTime.parse(endDateString).toDate();
+
+            if (!isDateRangeAvailable(product, startDate, endDate)) {
+                mav.addObject("errorMessage", "Selected date range is not available.");
+                return mav;
+            }
+
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String name = auth.getName(); //get logged in username
@@ -317,12 +347,35 @@ public class AccountController {
             rentalRequest.setRequester(user);
             rentalRequest.setCreateTimestamp(new Date());
             rentalRequest.setUpdateTimestamp(new Date());
-            rentalRequest.setStartDate(date);
+            rentalRequest.setStartDate(startDate);
+            rentalRequest.setEndDate(endDate);
             rentalRequest.setShippingOption(Integer.parseInt(shippingOptionValue));
 
             rentalRequestRepository.save(rentalRequest);
         }
         return mav;
+    }
+
+    private boolean isDateRangeAvailable(Product product, Date startDate, Date endDate) {
+        if (startDate.after(endDate)) {
+            return false;
+        }
+        List<RentalRequest> rentalRequestList = this.rentalRequestRepository.findByProduct(product);
+        for (RentalRequest rentalRequest : rentalRequestList) {
+            if (rentalRequest.getStartDate().after(startDate) && rentalRequest.getStartDate().before(endDate)) {
+                return false;
+            }
+            if (rentalRequest.getStartDate().equals(startDate) && rentalRequest.getStartDate().equals(endDate)) {
+                return false;
+            }
+            if (rentalRequest.getEndDate().after(startDate) && rentalRequest.getEndDate().before(endDate)) {
+                return false;
+            }
+            if (rentalRequest.getEndDate().equals(startDate) && rentalRequest.getEndDate().equals(endDate)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @PostMapping("/upload")

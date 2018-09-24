@@ -7,11 +7,11 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name="rental_request")
+@Table(name = "rental_request")
 public class RentalRequest {
-	
+
     @Id
-    @Column(name="request_id")
+    @Column(name = "request_id")
     @GeneratedValue
     private Integer id;
 
@@ -25,14 +25,14 @@ public class RentalRequest {
     private Integer status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="product_id")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(name = "shipping_option")
     private Integer shippingOption;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User requester;
 
     @Column(name = "createtimestamp")

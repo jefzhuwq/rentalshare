@@ -10,11 +10,11 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name="user")
+@Table(name = "user")
 public class User {
-	
+
     @Id
-    @Column(name="user_id")
+    @Column(name = "user_id")
     @GeneratedValue
     private Integer id;
 
@@ -23,7 +23,7 @@ public class User {
     @NotEmpty(message = "*Please provide an email")
     private String email;
 
-    @Column(name="user_name")
+    @Column(name = "user_name")
     private String username;
 
     @Column(name = "password")

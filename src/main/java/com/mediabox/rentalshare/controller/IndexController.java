@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.print.DocFlavor;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 
@@ -104,9 +108,20 @@ public class IndexController {
         mav.addObject("rentalRequestList", rentalRequestList);
         mav.addObject("priceList", priceRepository.findByProduct(product));
 
-        List<String> disabledDateList = new ArrayList<>();
-        rentalRequestList.forEach(obj -> disabledDateList.add(String.valueOf(obj.getStartDate())));
-        mav.addObject("disabledDateList", disabledDateList);
+        List<LocalDate> disabledStartDateList = new ArrayList<>();
+        List<LocalDate> disabledEndDateList = new ArrayList<>();
+
+        rentalRequestList.forEach(obj -> {
+            LocalDate localStartDate = obj.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate localEndDate = obj.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            disabledStartDateList.add(localStartDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+//            disabledEndDateList.add(localEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+            disabledStartDateList.add(localStartDate);
+            disabledEndDateList.add(localEndDate);
+        });
+
+        mav.addObject("disabledStartDateList", disabledStartDateList);
+        mav.addObject("disabledEndDateList", disabledEndDateList);
         return mav;
     }
 

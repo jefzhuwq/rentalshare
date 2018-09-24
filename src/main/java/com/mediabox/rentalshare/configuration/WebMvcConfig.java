@@ -21,10 +21,5 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {//implements WebMvcCo
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder;
     }
-
-//    @Bean(name = "categoryService")
-//    public List<Category> allCategories() {
-//        return categoryRepository.findAll();
-//    }
 }
 
