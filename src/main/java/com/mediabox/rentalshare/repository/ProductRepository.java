@@ -17,4 +17,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p where p.productName like %:keyword%")
     List<Product> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT p FROM Product p where p.productName like %:keyword% and p.category=:category")
+    List<Product> searchByKeyword(@Param("keyword") String keyword, @Param("category") Category category);
+
+    @Query("SELECT p FROM Product p where p.category=:category")
+    List<Product> getProductListByCategory(@Param("category") Category category);
 }

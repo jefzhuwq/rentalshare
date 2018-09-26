@@ -7,21 +7,21 @@
 <div th:fragment="copy">
 
 <!--==========First Header==========-->
-<div class="first_header">
-    <div class="container custome_container">
-        <div class="live_chat_area pull-left">
-            <a href="#"><i class="lnr lnr-bubble"></i>Live Chat Us</a>
-            <a href="#"><i class="lnr lnr-envelope"></i>Call Us Anytime: +660-984-893</a>
-        </div>
-        <div class="language_area pull-right">
-            <select class="selectpicker">
-                <option>English</option>
-                <option>Chinese</option>
-                <option>Japanese</option>
-            </select>
-        </div>
-    </div>
-</div>
+<!--<div class="first_header">-->
+    <!--<div class="container custome_container">-->
+        <!--<div class="live_chat_area pull-left">-->
+            <!--<a href="#"><i class="lnr lnr-bubble"></i>Live Chat Us</a>-->
+            <!--<a href="#"><i class="lnr lnr-envelope"></i>Call Us Anytime: +660-984-893</a>-->
+        <!--</div>-->
+        <!--<div class="language_area pull-right">-->
+            <!--<select class="selectpicker">-->
+                <!--<option>English</option>-->
+                <!--<option>Chinese</option>-->
+                <!--<option>Japanese</option>-->
+            <!--</select>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 <div class="logo_area">
     <div class="container custome_container">
         <div class="row">
@@ -33,15 +33,14 @@
             <div class="col-md-7">
                 <form th:action="@{/search_result}" method="get">
                     <div class="find_item_inner">
-                        <input type="text" placeholder="Search Here" id="keyword" name="keyword">
+                        <input type="text" placeholder="Search Here" id="keyword" name="keyword" />
                         <!--<p th:each="category : ${@categoryService.allCategories()}"-->
                            <!--th:text="${category.categoryName}">A Smoke Test</p>-->
                         <!--<div th:text="${@categoryService.allCategories()}">...</div>-->
-                        <!--<select class="selectpicker">-->
-                            <!--<option>All Categories</option>-->
-                            <!--<option>All Categories</option>-->
-                            <!--<option>All Categories</option>-->
-                        <!--</select>-->
+                        <select class="selectpicker" id="category_select" name="category_select">
+                            <option value="">All Category</option>
+                            <option th:each="category : ${T(com.mediabox.rentalshare.category.BaseCategory).values()}" th:text="${category.name}" th:value="${category.id}" />
+                        </select>
                         <input type="submit" class="btn btn-lg btn-primary" style="width: 150px" />
                     </div>
                 </form>
@@ -84,7 +83,7 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/">Home</a></li>
                     <li><a href="/post_product">Post Product</a></li>
-                    <li><a href="/browse_product">Browse Product</a></li>
+                    <li><a href="/browse_product?category=">Browse Product</a></li>
                     <li><a href="/contact">Contact</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

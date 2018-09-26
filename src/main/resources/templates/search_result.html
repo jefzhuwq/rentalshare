@@ -19,63 +19,65 @@
                             <h4>All Categories</h4>
                         </div>
                         <ul>
-                            <li><a href="#"><i class="lnr lnr-user"></i>Women’s Clothing</a></li>
-                            <li><a href="#"><i class="lnr lnr-shirt"></i>Men’s Clothing</a></li>
-                            <li><a href="#"><i class="lnr lnr-phone"></i>Phones & Accessories</a></li>
-                            <li><a href="#"><i class="lnr lnr-printer"></i>Computer & Office</a></li>
-                            <li><a href="#"><i class="lnr lnr-file-empty"></i>Consumer Electronics</a></li>
-                            <li><a href="#"><i class="lnr lnr-star"></i>Jewelry & Watches</a></li>
-                            <li><a href="#"><i class="lnr lnr-apartment"></i>Home & Garden</a></li>
-                            <li><a href="#"><i class="lnr lnr-mustache"></i>Bags & Shoes</a></li>
-                            <li><a href="#"><i class="lnr lnr-user"></i>Toys, Kids & Baby</a></li>
-                            <li><a href="#"><i class="lnr lnr-mustache"></i>Sports & Outdoors</a></li>
+                            <li th:each="category : ${T(com.mediabox.rentalshare.category.BaseCategory).values()}">
+                                <a th:href="'/browse_product?category=' + ${category.id}"><i class="lnr lnr-printer"></i><span th:text="${category.name}"/></a>
+                            </li>
+                            <!--<li><a href="#"><i class="lnr lnr-shirt"></i>Men’s Clothing</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-phone"></i>Phones & Accessories</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-printer"></i>Computer & Office</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-file-empty"></i>Consumer Electronics</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-star"></i>Jewelry & Watches</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-apartment"></i>Home & Garden</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-mustache"></i>Bags & Shoes</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-user"></i>Toys, Kids & Baby</a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-mustache"></i>Sports & Outdoors</a></li>-->
                         </ul>
                     </div>
-                    <div class="s_widget s_widget_brand">
-                        <div class="s_widget_tittle">
-                            <h4>Brand/Company</h4>
-                        </div>
-                        <ul>
-                            <li><a href="#">Apple</a></li>
-                            <li class=active><a href="#">Samsung</a></li>
-                            <li><a href="#">Huwei</a></li>
-                            <li><a href="#">Asus</a></li>
-                        </ul>
-                    </div>
-                    <div class="s_widget s_widget_price_range">
-                        <div class="s_widget_tittle">
-                            <h4>Price Range</h4>
-                        </div>
-                        <div class="range_slider">
-                            <div id="slider-range"></div>
-                            <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
-                        </div>
-                    </div>
+                    <!--<div class="s_widget s_widget_brand">-->
+                        <!--<div class="s_widget_tittle">-->
+                            <!--<h4>Brand/Company</h4>-->
+                        <!--</div>-->
+                        <!--<ul>-->
+                            <!--<li><a href="#">Apple</a></li>-->
+                            <!--<li class=active><a href="#">Samsung</a></li>-->
+                            <!--<li><a href="#">Huwei</a></li>-->
+                            <!--<li><a href="#">Asus</a></li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                    <!--<div class="s_widget s_widget_price_range">-->
+                        <!--<div class="s_widget_tittle">-->
+                            <!--<h4>Price Range</h4>-->
+                        <!--</div>-->
+                        <!--<div class="range_slider">-->
+                            <!--<div id="slider-range"></div>-->
+                            <!--<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">-->
+                        <!--</div>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="col-md-9">
-                <div class="short_by_listing_area">
-                    <div class="short_by_left">
-                        <h2><i class="lnr lnr-funnel"></i>Sorts by:</h2>
-                        <select class="selectpicker">
-                            <option>Latest Listing</option>
-                            <option>Latest Listing</option>
-                            <option>Latest Listing</option>
-                        </select>
-                    </div>
-                    <div class="middle_bar">
-                        <a class="active" href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
-                        <a href="#"><i class="fa fa-th" aria-hidden="true"></i></a>
-                    </div>
-                    <div class="item_right">
-                        <h2>Item Show:</h2>
-                        <select class="selectpicker">
-                            <option>60</option>
-                            <option>40</option>
-                            <option>40</option>
-                        </select>
-                    </div>
-                </div>
+                <!--<div class="short_by_listing_area">-->
+                    <!--<div class="short_by_left">-->
+                        <!--<h2><i class="lnr lnr-funnel"></i>Sorts by:</h2>-->
+                        <!--<select class="selectpicker">-->
+                            <!--<option>Latest Listing</option>-->
+                            <!--<option>Latest Listing</option>-->
+                            <!--<option>Latest Listing</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <!--<div class="middle_bar">-->
+                        <!--<a class="active" href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>-->
+                        <!--<a href="#"><i class="fa fa-th" aria-hidden="true"></i></a>-->
+                    <!--</div>-->
+                    <!--<div class="item_right">-->
+                        <!--<h2>Item Show:</h2>-->
+                        <!--<select class="selectpicker">-->
+                            <!--<option>60</option>-->
+                            <!--<option>40</option>-->
+                            <!--<option>40</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="men_clothing_tittle">
                     <h2>Search Result</h2>
                 </div>

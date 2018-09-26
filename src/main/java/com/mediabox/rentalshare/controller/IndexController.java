@@ -1,15 +1,14 @@
 package com.mediabox.rentalshare.controller;
 
+import com.mediabox.rentalshare.category.BaseCategory;
 import com.mediabox.rentalshare.model.*;
-import com.mediabox.rentalshare.repository.PriceRepository;
-import com.mediabox.rentalshare.repository.ProductImageRepository;
-import com.mediabox.rentalshare.repository.ProductRepository;
-import com.mediabox.rentalshare.repository.RentalRequestRepository;
+import com.mediabox.rentalshare.repository.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +37,9 @@ public class IndexController {
 
     @Autowired
     PriceRepository priceRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
@@ -78,9 +80,14 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/search_result", method = RequestMethod.GET)
-    public ModelAndView searchResult(@RequestParam("keyword") String keyword) {
+    public ModelAndView searchResult(@RequestParam("keyword") String keyword, @RequestParam("category_select") String categorySelect) {
         ModelAndView mav = new ModelAndView("search_result");
-        List<Product> productList = this.search(keyword);
+        Category category = null;
+        if (!StringUtils.isEmpty(categorySelect)) {
+            category = this.categoryRepository.findById(Integer.parseInt(categorySelect)).orElse(null);
+        }
+
+        List<Product> productList = this.search(keyword, category);
         mav.addObject("productList", productList);
         Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
         Map<Integer, List<Price>> priceMap = new HashMap<>();
@@ -93,8 +100,14 @@ public class IndexController {
         return mav;
     }
 
-    private List<Product> search(String keyword) {
-        List<Product> productList = productRepository.searchByKeyword(keyword);
+    private List<Product> search(String keyword, Category category) {
+        List<Product> productList = new ArrayList<>();
+        if (category != null) {
+            productList = productRepository.searchByKeyword(keyword, category);
+        } else {
+            productList = productRepository.searchByKeyword(keyword);
+        }
+
         return productList;
     }
 
@@ -132,8 +145,29 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/browse_product", method = RequestMethod.GET)
-    public ModelAndView browseProductList() {
+    public ModelAndView browseProductList(@RequestParam("category") String category) {
         ModelAndView mav = new ModelAndView("browse_product");
+        Category categoryEntity = null;
+        List<Product> productList = new ArrayList<>();
+        if (!StringUtils.isEmpty(category)) {
+            categoryEntity = categoryRepository.findById(Integer.parseInt(category)).orElse(null);
+        }
+        if (categoryEntity!=null) {
+            productList = productRepository.getProductListByCategory(categoryEntity);
+        } else {
+            productList = productRepository.findAll();
+        }
+        mav.addObject("productList", productList);
+
+        Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
+        Map<Integer, List<Price>> priceMap = new HashMap<>();
+        for (Product product : productList) {
+            productImageMap.put(product.getId(), productImageRepository.findByProduct(product));
+            priceMap.put(product.getId(), priceRepository.findByProduct(product));
+        }
+        mav.addObject("productImageMap", productImageMap);
+        mav.addObject("priceMap", priceMap);
+
         return mav;
     }
 
