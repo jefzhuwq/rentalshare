@@ -1244,7 +1244,7 @@ body, p, h1, h2, h3, h4, h5, h6 {
   border-left: 3px solid #2c92e0;
   line-height: 16px;
   padding-left: 8px;
-  margin-top: 28px;
+  margin-top: 8px;
   text-transform: uppercase;
 }
 
@@ -1417,6 +1417,7 @@ body, p, h1, h2, h3, h4, h5, h6 {
 }
 .men_clothing_product_item .men_item_image img {
   max-width: 100%;
+  height:300px;
 }
 .men_clothing_product_item .men_item_image .secondary_img {
   position: absolute;
@@ -2856,7 +2857,7 @@ body, p, h1, h2, h3, h4, h5, h6 {
 /*---------------------------------------------------- */
 /*----------------------------------------------------*/
 .get_touch_area {
-  padding-top: 90px !important;
+  padding-top: 30px !important;
   background: #f4f5f9;
 }
 .get_touch_area .section_title {
@@ -2874,9 +2875,9 @@ body, p, h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
 }
 .get_touch_area .get_touch {
-  padding: 60px 0;
+  padding: 20px 0;
   border-bottom: 1px solid #e1e3eb;
-  padding-bottom: 45px;
+  padding-bottom: 20px;
 }
 .get_touch_area .get_touch .get_touch_inner .item .item_left {
   padding-right: 30px;

@@ -65,9 +65,11 @@
                     <table class="table table-condensed table-bordered">
                         <thead>
                         <tr>
-                            <th>Date</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
                             <th>Shipping Option</th>
                             <th>User</th>
+                            <th>Email</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -78,6 +80,11 @@
                                 <div class="dayofweek"><span th:text="${#dates.dayOfWeekName(rentalRequest.startDate)}" /></div>
                                 <div class="shortdate text-muted"><span th:text="${#dates.monthName(rentalRequest.startDate) + ',' + #dates.year(rentalRequest.startDate)}" /></div>
                             </td>
+                            <td class="agenda-date active" rowspan="1">
+                                <div class="dayofmonth"><span th:text="${#dates.day(rentalRequest.endDate)}" /></div>
+                                <div class="dayofweek"><span th:text="${#dates.dayOfWeekName(rentalRequest.endDate)}" /></div>
+                                <div class="shortdate text-muted"><span th:text="${#dates.monthName(rentalRequest.endDate) + ',' + #dates.year(rentalRequest.endDate)}" /></div>
+                            </td>
                             <td class="agenda-time">
                                 <span th:text="${T(com.mediabox.rentalshare.model.ShippingOption).getTextByValue(rentalRequest.shippingOption)}" />
                             </td>
@@ -85,6 +92,12 @@
                                 <div class="agenda-event">
                                     <!--<i class="glyphicon glyphicon-repeat text-muted" title="Repeating event"></i> -->
                                     <span th:text="${rentalRequest.requester.username}" />
+                                </div>
+                            </td>
+                            <td class="agenda-events">
+                                <div class="agenda-event">
+                                    <!--<i class="glyphicon glyphicon-repeat text-muted" title="Repeating event"></i> -->
+                                    <a th:text="${rentalRequest.requester.email}" th:href="'mailto:' + ${rentalRequest.requester.email}" />
                                 </div>
                             </td>
                         </tr>

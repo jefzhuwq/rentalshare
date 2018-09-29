@@ -21,4 +21,7 @@ public interface RentalRequestRepository extends JpaRepository<RentalRequest, In
 
     @Query("SELECT p FROM RentalRequest p where p.requester= :requester")
     List<RentalRequest> findByUser(@Param("requester") User user);
+
+    @Query("SELECT p FROM RentalRequest p where p.requester= :requester and p.status=:status")
+    List<RentalRequest> findByUserAndStatus(@Param("requester") User user, @Param("status") Integer status);
 }

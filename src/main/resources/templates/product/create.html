@@ -36,9 +36,7 @@
                     <label for="category" class="col-2 col-form-label">Category</label>
                     <div class="col-10">
                         <select class="selectpicker" th:field="*{category}" id="category">
-                            <option th:value="1">cat1</option>
-                            <option th:value="2">cat2</option>
-                            <option th:value="3">cat3</option>
+                            <option th:each="category : ${T(com.mediabox.rentalshare.category.BaseCategory).values()}" th:value="${category.id}" th:text="${category.name}" />
                         </select>
                     </div>
                 </div>

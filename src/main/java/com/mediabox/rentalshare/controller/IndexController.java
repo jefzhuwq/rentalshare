@@ -138,12 +138,6 @@ public class IndexController {
         return mav;
     }
 
-    @RequestMapping(value = "/cart", method = RequestMethod.GET)
-    public ModelAndView cart() {
-        ModelAndView mav = new ModelAndView("cart");
-        return mav;
-    }
-
     @RequestMapping(value = "/browse_product", method = RequestMethod.GET)
     public ModelAndView browseProductList(@RequestParam("category") String category) {
         ModelAndView mav = new ModelAndView("browse_product");

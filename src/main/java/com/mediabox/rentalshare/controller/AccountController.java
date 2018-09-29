@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
@@ -88,15 +90,59 @@ public class AccountController {
 
         List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUser(userRepository.findByEmail(name));
         mav.addObject("rentalRequestList", rentalRequestList);
+        return mav;
+    }
 
-//        Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
-//        Map<Integer, List<Price>> priceMap = new HashMap<>();
-//        for (Favorite favorite : favoriteList) {
-//            productImageMap.put(favorite.getProduct().getId(), productImageRepository.findByProduct(favorite.getProduct()));
-//            priceMap.put(favorite.getProduct().getId(), priceRepository.findByProduct(favorite.getProduct()));
-//        }
-//        mav.addObject("productImageMap", productImageMap);
-//        mav.addObject("priceMap", priceMap);
+    @RequestMapping(value = "/cart", method = RequestMethod.GET)
+    public ModelAndView cart() {
+        ModelAndView mav = new ModelAndView("cart");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUserAndStatus(userRepository.findByEmail(name), RentalRequestStatus.IN_CART.getValue());
+        mav.addObject("rentalRequestList", rentalRequestList);
+
+        double totalPrice = 0;
+
+        Map<Integer, List<Price>> priceMap = new HashMap<>();
+        String result = "";
+
+        for (RentalRequest request : rentalRequestList) {
+            long rentalDays = Duration.between(
+                    request.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(),
+                    request.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()).toDays() + 1;
+//            result += ",day:" + rentalDays + ", price" + priceRepository.findByProduct(request.getProduct()).get(0).getUnitPrice();
+            totalPrice += priceRepository.findByProduct(request.getProduct()).get(0).getUnitPrice() * rentalDays;
+            priceMap.put(request.getProduct().getId(), priceRepository.findByProduct(request.getProduct()));
+        }
+        mav.addObject("totalPrice", totalPrice);
+        mav.addObject("priceMap", priceMap);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/checkout_cart", method = RequestMethod.GET)
+    public ModelAndView checkoutCart() {
+        ModelAndView mav = new ModelAndView("/account/checkout_cart");
+        return mav;
+    }
+
+    @RequestMapping(value = "/submit_order", method = RequestMethod.POST)
+    public ModelAndView submitOrder() {
+        ModelAndView mav = new ModelAndView("redirect:/my_order");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+
+        // Find all in cart requests
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUserAndStatus(userRepository.findByEmail(name), RentalRequestStatus.IN_CART.getValue());
+
+        for (RentalRequest request : rentalRequestList) {
+            request.setStatus(RentalRequestStatus.SUBMITTED.getValue());
+            request.setUpdateTimestamp(new Date());
+        }
+        rentalRequestRepository.saveAll(rentalRequestList);
+
         return mav;
     }
 
@@ -306,6 +352,7 @@ public class AccountController {
 
         if (productEdit.getUser().getEmail().equals(name)) {
             price.setProduct(productEdit);
+            price.setPeriodType(PeriodType.DAY.getValue());
             price.setCreateTimestamp(new Date());
             price.setUpdateTimestamp(new Date());
             priceRepository.save(price);
@@ -349,6 +396,7 @@ public class AccountController {
             rentalRequest.setUpdateTimestamp(new Date());
             rentalRequest.setStartDate(startDate);
             rentalRequest.setEndDate(endDate);
+            rentalRequest.setStatus(RentalRequestStatus.IN_CART.getValue());
             rentalRequest.setShippingOption(Integer.parseInt(shippingOptionValue));
 
             rentalRequestRepository.save(rentalRequest);
