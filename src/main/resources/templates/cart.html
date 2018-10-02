@@ -73,7 +73,7 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <h4 th:text="'Total Price: $' + ${totalPrice}" />
+                            <h4 th:text="'Total Price: $' + ${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 2, 'POINT')}" />
                             <input type="submit" value="Checkout" class="btn btn-lg btn-primary" />
                         </form>
                     </div>

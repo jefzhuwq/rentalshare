@@ -10,6 +10,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mediabox.rentalshare.model.*;
 import com.mediabox.rentalshare.repository.*;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +37,7 @@ import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
 
 @Controller
 public class AccountController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     ProductRepository productRepository;

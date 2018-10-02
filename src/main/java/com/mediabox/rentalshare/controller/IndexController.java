@@ -4,6 +4,8 @@ import com.mediabox.rentalshare.category.BaseCategory;
 import com.mediabox.rentalshare.model.*;
 import com.mediabox.rentalshare.repository.*;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,7 @@ import java.util.*;
 
 @Controller
 public class IndexController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     ProductRepository productRepository;
@@ -41,9 +44,13 @@ public class IndexController {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    ReviewRepository reviewRepository;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
         ModelAndView mav = new ModelAndView("index");
+        logger.info("Jeffery: this is a test");
         return mav;
     }
 
@@ -121,14 +128,33 @@ public class IndexController {
         mav.addObject("rentalRequestList", rentalRequestList);
         mav.addObject("priceList", priceRepository.findByProduct(product));
 
+        List<Review> reviewList = reviewRepository.findByProduct(product);
+
+        mav.addObject("reviewList", reviewList);
+
+        // Add avg rate and breakdown
+        Map<String, String> rateMap = new HashMap<>();
+        double totalRate = 0;
+        for (Review review : reviewList) {
+            if (rateMap.containsKey(review.getRate().toString())) {
+                Integer count = Integer.parseInt(rateMap.get(review.getRate().toString()));
+                count++;
+                rateMap.put(review.getRate().toString(), count.toString());
+            } else {
+                rateMap.put(review.getRate().toString(), "1");
+            }
+            totalRate += review.getRate();
+        }
+        rateMap.put("avg", String.valueOf(totalRate / reviewList.size()));
+
+        mav.addObject("rateMap", rateMap);
+
         List<LocalDate> disabledStartDateList = new ArrayList<>();
         List<LocalDate> disabledEndDateList = new ArrayList<>();
 
         rentalRequestList.forEach(obj -> {
             LocalDate localStartDate = obj.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate localEndDate = obj.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//            disabledStartDateList.add(localStartDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-//            disabledEndDateList.add(localEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
             disabledStartDateList.add(localStartDate);
             disabledEndDateList.add(localEndDate);
         });
