@@ -3,12 +3,9 @@ package com.mediabox.rentalshare.controller;
 import com.mediabox.rentalshare.category.BaseCategory;
 import com.mediabox.rentalshare.model.*;
 import com.mediabox.rentalshare.repository.*;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.print.DocFlavor;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 
 
@@ -50,7 +44,14 @@ public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
         ModelAndView mav = new ModelAndView("index");
-        logger.info("Jeffery: this is a test");
+
+        Category textBookCategory = categoryRepository.findById(BaseCategory.TEXT_BOOK.getId()).isPresent() ? categoryRepository.findById(BaseCategory.TEXT_BOOK.getId()).get() : null;
+        if (textBookCategory != null) {
+            List<Product> topTextBookList = productRepository.getProductListByCategory(textBookCategory);
+            mav.addObject("topTextBookList", topTextBookList);
+            mav.addObject("topTextBookImageMap", this.getProductImageMap(topTextBookList));
+            mav.addObject("topTextBookPriceMap", this.getPriceMap(topTextBookList));
+        }
         return mav;
     }
 
@@ -96,15 +97,25 @@ public class IndexController {
 
         List<Product> productList = this.search(keyword, category);
         mav.addObject("productList", productList);
+        mav.addObject("productImageMap", this.getProductImageMap(productList));
+        mav.addObject("priceMap", this.getPriceMap(productList));
+        return mav;
+    }
+
+    private Map<Integer, List<ProductImage>> getProductImageMap(List<Product> productList) {
         Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
-        Map<Integer, List<Price>> priceMap = new HashMap<>();
         for (Product product : productList) {
             productImageMap.put(product.getId(), productImageRepository.findByProduct(product));
+        }
+        return productImageMap;
+    }
+
+    private Map<Integer, List<Price>> getPriceMap(List<Product> productList) {
+        Map<Integer, List<Price>> priceMap = new HashMap<>();
+        for (Product product : productList) {
             priceMap.put(product.getId(), priceRepository.findByProduct(product));
         }
-        mav.addObject("productImageMap", productImageMap);
-        mav.addObject("priceMap", priceMap);
-        return mav;
+        return priceMap;
     }
 
     private List<Product> search(String keyword, Category category) {
@@ -121,7 +132,7 @@ public class IndexController {
     @RequestMapping(value = "/view_product/{id}", method = RequestMethod.GET)
     public ModelAndView editProduct(@PathVariable("id") int id) {
         ModelAndView mav = new ModelAndView("/product/view");
-        Product product = productRepository.findById(id).get();
+        Product product = productRepository.findById(id).isPresent() ? productRepository.findById(id).get() : null;
         mav.addObject("product", product);
         mav.addObject("productImageList", productImageRepository.findByProduct(product));
         List<RentalRequest> rentalRequestList = rentalRequestRepository.findByProduct(product);
@@ -137,9 +148,9 @@ public class IndexController {
         double totalRate = 0;
         for (Review review : reviewList) {
             if (rateMap.containsKey(review.getRate().toString())) {
-                Integer count = Integer.parseInt(rateMap.get(review.getRate().toString()));
+                int count = Integer.parseInt(rateMap.get(review.getRate().toString()));
                 count++;
-                rateMap.put(review.getRate().toString(), count.toString());
+                rateMap.put(review.getRate().toString(), Integer.toString(count));
             } else {
                 rateMap.put(review.getRate().toString(), "1");
             }
@@ -168,7 +179,7 @@ public class IndexController {
     public ModelAndView browseProductList(@RequestParam("category") String category) {
         ModelAndView mav = new ModelAndView("browse_product");
         Category categoryEntity = null;
-        List<Product> productList = new ArrayList<>();
+        List<Product> productList;
         if (!StringUtils.isEmpty(category)) {
             categoryEntity = categoryRepository.findById(Integer.parseInt(category)).orElse(null);
         }
@@ -208,8 +219,7 @@ public class IndexController {
 
     @RequestMapping(value = "/access_denied", method = RequestMethod.GET)
     public ModelAndView accessDenied() {
-        ModelAndView mav = new ModelAndView("/access_denied");
-        return mav;
+        return new ModelAndView("/access_denied");
     }
 
     @RequestMapping(value = "/calendar", method = RequestMethod.GET)

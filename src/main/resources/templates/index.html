@@ -6,160 +6,35 @@
 
 <!-- header -->
 <div th:replace="fragments/header :: copy"></div>
-<!--==========Slider Area==========-->
-<section class="main_slider_area row m0">
-    <div class="camera_wrap main_slider_inner">
-        <div data-thumb="img/home-slider/home-slider-1.jpg" data-src="img/home-slider/home-slider-1.jpg">
-            <div class="container custome_container">
-                <div class="slider_text_main">
-                    <div class="slider_text">
-                        <h2 class="fadeInUp animated">Beautiful Shoe!</h2>
-                        <p class="fadeInUp animated">Outdoor advertising is a low budget and effective way of advertising a company’s product. Among the entire methods billboard advertising is</p>
-                        <h3 class="fadeInUp animated">US $120.90 <span><s>$180.99</s></span></h3>
-                        <a class="slider_btn fadeInLeft animated" href="#"><i class="lnr lnr-cart"></i> Add To Cart</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div data-thumb="img/home-slider/home-slider-2.jpg" data-src="img/home-slider/home-slider-2.jpg">
-            <div class="container custome_container">
-                <div class="slider_text_main">
-                    <div class="slider_text">
-                        <h2 class="fadeInUp animated">Beautiful Shoe!</h2>
-                        <p class="fadeInUp animated">Outdoor advertising is a low budget and effective way of advertising a company’s product. Among the entire methods billboard advertising is</p>
-                        <h3 class="fadeInUp animated">US $120.90 <span><s>$180.99</s></span></h3>
-                        <a class="slider_btn fadeInLeft animated" href="#"><i class="lnr lnr-cart"></i> Add To Cart</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--==========End Slider area==========-->
-
-<!--==========Add area==========-->
-<section class="add_space">
-    <div class="container custome_container">
-        <img src="img/add_image/home_add_1.jpg" alt="">
-    </div>
-</section>
-<!--==========End Add area==========-->
 
 <!--==========Product categories view==========-->
 <section class="product_categori_list">
     <div class="container custome_container">
         <div class="men_clothing">
-            <div class="men_clothing_heading">
-                <a class="men_cl" href="#"><i class="lnr lnr-user "></i>Men Clothing</a>
-                <nav>
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#down" aria-controls="down" role="tab" data-toggle="tab">Down Jackets</a></li>
-                        <li role="presentation"><a href="#hodies" aria-controls="hodies" role="tab" data-toggle="tab">Hoodies</a></li>
-                        <li role="presentation"><a href="#shirt" aria-controls="shirt" role="tab" data-toggle="tab">T-shirts</a></li>
-                        <li role="presentation"><a href="#striped" aria-controls="striped" role="tab" data-toggle="tab">Striped Shirts</a></li>
-                        <li role="presentation"><a href="#Suits" aria-controls="Suits" role="tab" data-toggle="tab">Suits</a></li>
-                        <li role="presentation"><a href="#Jeans" aria-controls="Jeans" role="tab" data-toggle="tab">Jeans</a></li>
-                        <li role="presentation"><a href="#Pants" aria-controls="Pants" role="tab" data-toggle="tab">Casual Pants</a></li>
-                        <li role="presentation"><a href="#Parkas" aria-controls="Parkas" role="tab" data-toggle="tab">Parkas</a></li>
-                    </ul>
-                </nav>
-                <a class="all_categories" href="#">All Men Categories <i class="lnr lnr-arrow-right"></i></a>
+            <div class="men_clothing_heading" style="height:59px;">
+                <a class="men_cl" href="#" style="height:59px;"><i class="lnr lnr-user"></i>Text Books</a>
+                <nav style="width:826px"></nav>
+                <a class="all_categories" href="/browse_product?category=1" style="height:58px;">All Text Books<i class="lnr lnr-arrow-right"></i></a>
             </div>
             <div class="row">
-                <div class="col-md-3 col-xs-6">
+                <div th:each="textBook : ${topTextBookList}" class="col-md-3 col-xs-6">
                     <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-1.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
+                        <a th:href="'/view_product/' + ${textBook.id}">
+                            <img th:src="${topTextBookImageMap.get(textBook.id).size()!=0 ? topTextBookImageMap.get(textBook.id)[0].imagePath : 'img/no-image-available.jpg'}" style="height:300px;" alt="">
+                            <div class="re_product_price">
+                                <h4 th:text="${textBook.productName}"></h4>
+                                <br />
+                                <h4 th:each="price : ${topTextBookPriceMap.get(textBook.id)}">
+                                    <span th:text="${T(com.mediabox.rentalshare.model.PeriodType).getTextByValue(price.periodType)}" /> :
+                                    <span th:text="'$'+ ${price.unitPrice}" />
+                                </h4>
+                                <h4 th:text="${topTextBookPriceMap.get(textBook.id).size()==0 ? 'N/A' : ''}"></h4>
+                                <div class="re_product_checkout">
+                                    <a href="#"><i class="lnr lnr-cart"></i></a>
+                                    <a href="#"><i class="lnr lnr-heart"></i></a>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-2.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-3.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-4.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-5.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-6.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-7.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <div class="re_product_inner">
-                        <img src="img/recommended-product/re-product-8.jpg" alt="">
-                        <div class="re_product_price">
-                            <h4>US $120.90</h4>
-                            <div class="re_product_checkout">
-                                <a href="#"><i class="lnr lnr-cart"></i></a>
-                                <a href="#"><i class="lnr lnr-heart"></i></a>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -167,122 +42,6 @@
     </div>
 </section>
 <!--==========End Product categories view==========-->
-
-<!--==========Add area==========-->
-<section class="add_space middle_add">
-    <div class="container custome_container">
-        <img src="img/add_image/home_add_1.jpg" alt="">
-    </div>
-</section>
-<!--==========End Add area==========-->
-
-<!--==========Recomanded Product area==========-->
-<section class="recomanded_product">
-    <div class="container custome_container">
-        <div class="re_tittle">
-            <h2>Recommended For You</h2>
-        </div>
-        <div class="row">
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-1.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-2.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-3.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-4.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-5.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-6.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-7.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-xs-6">
-                <div class="re_product_inner">
-                    <img src="img/recommended-product/re-product-8.jpg" alt="">
-                    <div class="re_product_price">
-                        <h4>US $120.90</h4>
-                        <div class="re_product_checkout">
-                            <a href="#"><i class="lnr lnr-cart"></i></a>
-                            <a href="#"><i class="lnr lnr-heart"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--==========End Recomanded Product area==========-->
 
 <!--==========Home Feature area==========-->
 <section class="home_product_feature">

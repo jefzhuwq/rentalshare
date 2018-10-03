@@ -1,42 +1,18 @@
 package com.mediabox.rentalshare.controller;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mediabox.rentalshare.model.*;
 import com.mediabox.rentalshare.repository.*;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
-
 
 @Controller
 public class ProductController {
@@ -84,7 +60,7 @@ public class ProductController {
         String name = auth.getName(); //get logged in username
         User user = userRepository.findByEmail(name);
 
-        Product product = productRepository.findById(Integer.parseInt(productId)).get();
+        Product product = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
 
         review.setProduct(product);
         review.setStatus(1);

@@ -114,7 +114,6 @@ public class AccountController {
             long rentalDays = Duration.between(
                     request.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(),
                     request.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()).toDays() + 1;
-//            result += ",day:" + rentalDays + ", price" + priceRepository.findByProduct(request.getProduct()).get(0).getUnitPrice();
             totalPrice += priceRepository.findByProduct(request.getProduct()).get(0).getUnitPrice() * rentalDays;
             priceMap.put(request.getProduct().getId(), priceRepository.findByProduct(request.getProduct()));
         }
@@ -159,7 +158,7 @@ public class AccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
-        Product product = productRepository.findById(Integer.parseInt(productId)).get();
+        Product product = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
 
         favorite.setProduct(product);
         favorite.setCreateTimestamp(new Date());
@@ -245,9 +244,9 @@ public class AccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
-        Product product = productRepository.findById(id).get();
+        Product product = productRepository.findById(id).isPresent() ? productRepository.findById(id).get() : null;
 
-        if (product.getUser().getEmail().equals(name)) {
+        if (product != null && product.getUser().getEmail().equals(name)) {
             mav.addObject("product", product);
             mav.addObject("price", new Price());
 
@@ -270,9 +269,9 @@ public class AccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
-        Product productEdit = productRepository.findById(product.getId()).get();
+        Product productEdit = productRepository.findById(product.getId()).isPresent() ? productRepository.findById(product.getId()).get() : null;
 
-        if (productEdit.getUser().getEmail().equals(name)) {
+        if (productEdit != null && productEdit.getUser().getEmail().equals(name)) {
             productEdit.setCategory(product.getCategory());
             productEdit.setProductDescription(product.getProductDescription());
             productEdit.setProductName(product.getProductName());
@@ -294,9 +293,9 @@ public class AccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
-        Product product = productRepository.findById(id).get();
+        Product product = productRepository.findById(id).isPresent() ? productRepository.findById(id).get() : null;
 
-        if (product.getUser().getEmail().equals(name)) {
+        if (product != null && product.getUser().getEmail().equals(name)) {
             product.setIsActive(0);
             product.setUpdateTimestamp(new Date());
             productRepository.save(product);
@@ -309,13 +308,13 @@ public class AccountController {
 
     @RequestMapping(value = "/delete_price/{id}", method = RequestMethod.GET)
     public ModelAndView deletePrice(@PathVariable("id") int id) {
-        Price price = priceRepository.findById(id).get();
+        Price price = priceRepository.findById(id).isPresent() ? priceRepository.findById(id).get() : null;
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
         ModelAndView mav = new ModelAndView();
-        if (price.getProduct().getUser().getEmail().equals(name)) {
+        if (price != null && price.getProduct().getUser().getEmail().equals(name)) {
             mav.setViewName("redirect:/edit_product/" + price.getProduct().getId());
             priceRepository.delete(price);
         } else{
@@ -327,13 +326,13 @@ public class AccountController {
 
     @RequestMapping(value = "/delete_image/{id}", method = RequestMethod.GET)
     public ModelAndView deleteImage(@PathVariable("id") int id) {
-        ProductImage productImage = productImageRepository.findById(id).get();
+        ProductImage productImage = productImageRepository.findById(id).isPresent() ? productImageRepository.findById(id).get() : null;
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
         ModelAndView mav = new ModelAndView();
-        if (productImage.getProduct().getUser().getEmail().equals(name)) {
+        if (productImage != null && productImage.getProduct().getUser().getEmail().equals(name)) {
             mav.setViewName("redirect:/edit_product/" + productImage.getProduct().getId());
             productImageRepository.delete(productImage);
         } else{
@@ -351,9 +350,9 @@ public class AccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
 
-        Product productEdit = productRepository.findById(Integer.parseInt(productId)).get();
+        Product productEdit = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
 
-        if (productEdit.getUser().getEmail().equals(name)) {
+        if (productEdit != null && productEdit.getUser().getEmail().equals(name)) {
             price.setProduct(productEdit);
             price.setPeriodType(PeriodType.DAY.getValue());
             price.setCreateTimestamp(new Date());
@@ -371,7 +370,7 @@ public class AccountController {
     public ModelAndView rentProduct(HttpServletRequest request) {
         String productId = request.getParameter("productId");
         String shippingOptionValue = request.getParameter("shippingOption");
-        Product product = productRepository.findById(Integer.parseInt(productId)).get();
+        Product product = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
         ModelAndView mav = new ModelAndView("redirect:/view_product/" + productId);
 
         String startDateString = request.getParameter("startDate");
@@ -386,13 +385,11 @@ public class AccountController {
                 return mav;
             }
 
-
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String name = auth.getName(); //get logged in username
             User user = userRepository.findByEmail(name);
 
             RentalRequest rentalRequest = new RentalRequest();
-
             rentalRequest.setProduct(product);
             rentalRequest.setRequester(user);
             rentalRequest.setCreateTimestamp(new Date());
@@ -466,13 +463,15 @@ public class AccountController {
     }
 
     private void addProductImage(String productId, String filePath) {
-        ProductImage productImage = new ProductImage();
-        Product productEdit = productRepository.findById(Integer.parseInt(productId)).get();
-        productImage.setImagePath(filePath);
-        productImage.setCreateTimestamp(new Date());
-        productImage.setUpdateTimestamp(new Date());
-        productImage.setProduct(productEdit);
-        productImageRepository.save(productImage);
+        Product productEdit = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
+        if (productEdit!=null) {
+            ProductImage productImage = new ProductImage();
+            productImage.setImagePath(filePath);
+            productImage.setCreateTimestamp(new Date());
+            productImage.setUpdateTimestamp(new Date());
+            productImage.setProduct(productEdit);
+            productImageRepository.save(productImage);
+        }
     }
 
     String clientRegion = "*** Client region ***";

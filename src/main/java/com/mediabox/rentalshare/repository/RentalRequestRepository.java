@@ -1,6 +1,5 @@
 package com.mediabox.rentalshare.repository;
 
-import com.mediabox.rentalshare.model.Price;
 import com.mediabox.rentalshare.model.Product;
 import com.mediabox.rentalshare.model.RentalRequest;
 import com.mediabox.rentalshare.model.User;

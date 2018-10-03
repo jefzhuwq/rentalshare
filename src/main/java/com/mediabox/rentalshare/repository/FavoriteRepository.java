@@ -1,8 +1,6 @@
 package com.mediabox.rentalshare.repository;
 
 import com.mediabox.rentalshare.model.Favorite;
-import com.mediabox.rentalshare.model.Price;
-import com.mediabox.rentalshare.model.Product;
 import com.mediabox.rentalshare.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
