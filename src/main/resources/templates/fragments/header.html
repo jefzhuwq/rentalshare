@@ -33,7 +33,7 @@
             <div class="col-md-7">
                 <form th:action="@{/search_result}" method="get">
                     <div class="find_item_inner">
-                        <input type="text" placeholder="Search Here" id="keyword" name="keyword" />
+                        <input type="text" placeholder="Search Here" id="keyword" name="keyword" th:value="${param.keyword}" />
                         <!--<p th:each="category : ${@categoryService.allCategories()}"-->
                            <!--th:text="${category.categoryName}">A Smoke Test</p>-->
                         <!--<div th:text="${@categoryService.allCategories()}">...</div>-->

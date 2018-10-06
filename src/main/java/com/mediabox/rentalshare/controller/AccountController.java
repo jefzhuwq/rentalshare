@@ -2,11 +2,7 @@ package com.mediabox.rentalshare.controller;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mediabox.rentalshare.model.*;
 import com.mediabox.rentalshare.repository.*;
 import org.joda.time.DateTime;
@@ -24,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +29,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.*;
 
+import static com.mediabox.rentalshare.utils.Constants.S3_BUCKET_NAME;
 import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
 
 
@@ -57,6 +55,9 @@ public class AccountController {
     @Autowired
     FavoriteRepository favoriteRepository;
 
+    @Autowired
+    private AmazonS3 s3Client;
+
     @RequestMapping(value = "/my_account", method = RequestMethod.GET)
     public ModelAndView myAccount() {
         ModelAndView mav = new ModelAndView("/account/my_account");
@@ -67,10 +68,7 @@ public class AccountController {
     public ModelAndView myFavorite() {
         ModelAndView mav = new ModelAndView("/account/my_favorite");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
-        List<Favorite> favoriteList = favoriteRepository.findByUser(userRepository.findByEmail(name));
+        List<Favorite> favoriteList = favoriteRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("favoriteList", favoriteList);
 
         Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
@@ -88,10 +86,7 @@ public class AccountController {
     public ModelAndView myOrder() {
         ModelAndView mav = new ModelAndView("/account/my_order");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
-        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUser(userRepository.findByEmail(name));
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("rentalRequestList", rentalRequestList);
         return mav;
     }
@@ -99,16 +94,13 @@ public class AccountController {
     @RequestMapping(value = "/cart", method = RequestMethod.GET)
     public ModelAndView cart() {
         ModelAndView mav = new ModelAndView("cart");
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
 
-        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUserAndStatus(userRepository.findByEmail(name), RentalRequestStatus.IN_CART.getValue());
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUserAndStatus(userRepository.findByEmail(this.getLoggedUserName()), RentalRequestStatus.IN_CART.getValue());
         mav.addObject("rentalRequestList", rentalRequestList);
 
         double totalPrice = 0;
 
         Map<Integer, List<Price>> priceMap = new HashMap<>();
-        String result = "";
 
         for (RentalRequest request : rentalRequestList) {
             long rentalDays = Duration.between(
@@ -133,11 +125,8 @@ public class AccountController {
     public ModelAndView submitOrder() {
         ModelAndView mav = new ModelAndView("redirect:/my_order");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
         // Find all in cart requests
-        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUserAndStatus(userRepository.findByEmail(name), RentalRequestStatus.IN_CART.getValue());
+        List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUserAndStatus(userRepository.findByEmail(this.getLoggedUserName()), RentalRequestStatus.IN_CART.getValue());
 
         for (RentalRequest request : rentalRequestList) {
             request.setStatus(RentalRequestStatus.SUBMITTED.getValue());
@@ -148,6 +137,11 @@ public class AccountController {
         return mav;
     }
 
+    private String getLoggedUserName() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName(); //get logged in username
+    }
+
     @RequestMapping(value = "/add_to_favorite", method = RequestMethod.POST)
     public ModelAndView addToFavorite(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("redirect:/my_favorite");
@@ -155,16 +149,13 @@ public class AccountController {
         String productId = request.getParameter("productId");
         ModelAndView mav = new ModelAndView("redirect:/edit_product/" + productId);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
         Product product = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
 
         favorite.setProduct(product);
         favorite.setCreateTimestamp(new Date());
         favorite.setUpdateTimestamp(new Date());
 
-        favorite.setUser(userRepository.findByEmail(name));
+        favorite.setUser(userRepository.findByEmail(this.getLoggedUserName()));
 
         favoriteRepository.save(favorite);
         return modelAndView;
@@ -174,10 +165,7 @@ public class AccountController {
     public ModelAndView mySchedule() {
         ModelAndView mav = new ModelAndView("/account/my_schedule");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
-        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(name));
+        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("productList", productList);
 
         if (productList.size()>0) {
@@ -191,11 +179,8 @@ public class AccountController {
     public ModelAndView selectProductSchedule(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("/account/my_schedule");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
         String selectedProductId = request.getParameter("select_product");
-        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(name));
+        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("productList", productList);
         mav.addObject("selectedProductId", selectedProductId);
 
@@ -216,10 +201,7 @@ public class AccountController {
         product.setUpdateTimestamp(new Date());
         product.setIsActive(1);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
-        product.setUser(userRepository.findByEmail(name));
+        product.setUser(userRepository.findByEmail(this.getLoggedUserName()));
 
         productRepository.save(product);
         return modelAndView;
@@ -229,10 +211,7 @@ public class AccountController {
     public ModelAndView productList() {
         ModelAndView mav = new ModelAndView("/account/product_list");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
-        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(name));
+        List<Product> productList = productRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("productList", productList);
         return mav;
     }
@@ -241,12 +220,9 @@ public class AccountController {
     public ModelAndView editProduct(@PathVariable("id") int id) {
         ModelAndView mav = new ModelAndView("/product/edit");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
         Product product = productRepository.findById(id).isPresent() ? productRepository.findById(id).get() : null;
 
-        if (product != null && product.getUser().getEmail().equals(name)) {
+        if (product != null && product.getUser().getEmail().equals(this.getLoggedUserName())) {
             mav.addObject("product", product);
             mav.addObject("price", new Price());
 
@@ -266,12 +242,9 @@ public class AccountController {
     public ModelAndView updateProduct(@ModelAttribute Product product) {
         ModelAndView mav = new ModelAndView("redirect:/product_list");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
         Product productEdit = productRepository.findById(product.getId()).isPresent() ? productRepository.findById(product.getId()).get() : null;
 
-        if (productEdit != null && productEdit.getUser().getEmail().equals(name)) {
+        if (productEdit != null && productEdit.getUser().getEmail().equals(this.getLoggedUserName())) {
             productEdit.setCategory(product.getCategory());
             productEdit.setProductDescription(product.getProductDescription());
             productEdit.setProductName(product.getProductName());
@@ -328,13 +301,45 @@ public class AccountController {
     public ModelAndView deleteImage(@PathVariable("id") int id) {
         ProductImage productImage = productImageRepository.findById(id).isPresent() ? productImageRepository.findById(id).get() : null;
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
+        ModelAndView mav = new ModelAndView();
+        if (productImage != null && productImage.getProduct().getUser().getEmail().equals(this.getLoggedUserName())) {
+            mav.setViewName("redirect:/edit_product/" + productImage.getProduct().getId());
+            if (productImage.getIsPrimary()) {
+                List<ProductImage> productImageList = productImageRepository.findByProduct(productImage.getProduct());
+                for (ProductImage image : productImageList) {
+                    if (image.getId() != productImage.getId()) {
+                        image.setIsPrimary(true);
+                        productImageRepository.save(image);
+                        break;
+                    }
+                }
+            }
+            productImageRepository.delete(productImage);
+        } else{
+            mav.setViewName("/error");
+        }
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/mark_image_primary/{id}", method = RequestMethod.GET)
+    public ModelAndView markImagePrimary(@PathVariable("id") int id) {
+        ProductImage productImage = productImageRepository.findById(id).isPresent() ? productImageRepository.findById(id).get() : null;
 
         ModelAndView mav = new ModelAndView();
-        if (productImage != null && productImage.getProduct().getUser().getEmail().equals(name)) {
+        if (productImage != null && productImage.getProduct().getUser().getEmail().equals(this.getLoggedUserName())) {
             mav.setViewName("redirect:/edit_product/" + productImage.getProduct().getId());
-            productImageRepository.delete(productImage);
+
+            // get all other productImage and set all productImage
+            List<ProductImage> productImageList = productImageRepository.findByProduct(productImage.getProduct());
+            for (ProductImage image : productImageList) {
+                if (image.getId() == productImage.getId()) {
+                    image.setIsPrimary(true);
+                } else {
+                    image.setIsPrimary(false);
+                }
+            }
+            productImageRepository.saveAll(productImageList);
         } else{
             mav.setViewName("/error");
         }
@@ -347,12 +352,9 @@ public class AccountController {
         String productId = request.getParameter("productId");
         ModelAndView mav = new ModelAndView("redirect:/edit_product/" + productId);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
         Product productEdit = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
 
-        if (productEdit != null && productEdit.getUser().getEmail().equals(name)) {
+        if (productEdit != null && productEdit.getUser().getEmail().equals(this.getLoggedUserName())) {
             price.setProduct(productEdit);
             price.setPeriodType(PeriodType.DAY.getValue());
             price.setCreateTimestamp(new Date());
@@ -385,9 +387,7 @@ public class AccountController {
                 return mav;
             }
 
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String name = auth.getName(); //get logged in username
-            User user = userRepository.findByEmail(name);
+            User user = userRepository.findByEmail(this.getLoggedUserName());
 
             RentalRequest rentalRequest = new RentalRequest();
             rentalRequest.setProduct(product);
@@ -426,6 +426,7 @@ public class AccountController {
         return true;
     }
 
+
     @PostMapping("/upload")
     public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
@@ -440,14 +441,10 @@ public class AccountController {
             String productId = request.getParameter("productId");
             mav.setViewName("redirect:/edit_product/" + productId);
 
-            // Get the file and save it somewhere
-            this.saveFileToLocal(file);
-
-            redirectAttributes.addFlashAttribute("message",
-                    "You successfully uploaded '" + file.getOriginalFilename() + "'");
-
+            File convertedFile = this.convertMultiPartToFile(file);
+            this.addProductImageToS3(convertedFile);
+            redirectAttributes.addFlashAttribute("message","You successfully uploaded '" + file.getOriginalFilename() + "'");
             this.addProductImage(productId, file.getOriginalFilename());
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -474,39 +471,26 @@ public class AccountController {
         }
     }
 
-    String clientRegion = "*** Client region ***";
-    String bucketName = "*** Bucket name ***";
-    String stringObjKeyName = "*** String object key name ***";
-    String fileObjKeyName = "*** File object key name ***";
-    String fileName = "*** Path to file to upload ***";
-
-    private void addProductImageToS3() {
+    private void addProductImageToS3(File file) {
         try {
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(clientRegion)
-                    .withCredentials(new ProfileCredentialsProvider())
-                    .build();
-
             // Upload a text string as a new object.
-            s3Client.putObject(bucketName, stringObjKeyName, "Uploaded String Object");
+            s3Client.putObject(
+                    S3_BUCKET_NAME,
+                    file.getName(),
+                    file
+            );
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            e.printStackTrace();
+        }
+    }
 
-            // Upload a file as a new object with ContentType and title specified.
-            PutObjectRequest request = new PutObjectRequest(bucketName, fileObjKeyName, new File(fileName));
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("plain/text");
-            metadata.addUserMetadata("x-amz-meta-title", "someTitle");
-            request.setMetadata(metadata);
-            s3Client.putObject(request);
-        }
-        catch(AmazonServiceException e) {
-            // The call was transmitted successfully, but Amazon S3 couldn't process
-            // it, so it returned an error response.
-            e.printStackTrace();
-        }
-        catch(SdkClientException e) {
-            // Amazon S3 couldn't be contacted for a response, or the client
-            // couldn't parse the response from Amazon S3.
-            e.printStackTrace();
-        }
+    private File convertMultiPartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
     }
 }

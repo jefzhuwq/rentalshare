@@ -20,7 +20,8 @@
                 <div th:each="textBook : ${topTextBookList}" class="col-md-3 col-xs-6">
                     <div class="re_product_inner">
                         <a th:href="'/view_product/' + ${textBook.id}">
-                            <img th:src="${topTextBookImageMap.get(textBook.id).size()!=0 ? topTextBookImageMap.get(textBook.id)[0].imagePath : 'img/no-image-available.jpg'}" style="height:300px;" alt="">
+                            <img th:src="${topTextBookImageMap.get(textBook.id)!=null ?
+                                T(com.mediabox.rentalshare.utils.Constants).S3_PREFIX + topTextBookImageMap.get(textBook.id).imagePath : 'img/no-image-available.jpg'}" style="height:300px;" alt="">
                             <div class="re_product_price">
                                 <h4 th:text="${textBook.productName}"></h4>
                                 <br />

@@ -146,9 +146,12 @@
         <div class="col-md-4" th:each="productImage, i : ${productImageList}">
             <div class="thumbnail">
                 <a href="/w3images/lights.jpg">
-                    <img th:src="${productImage.imagePath}" alt="" style="width:100%">
+                    <img th:src="${T(com.mediabox.rentalshare.utils.Constants).S3_PREFIX + productImage.imagePath}" alt="" style="width:100%">
                     <div class="caption">
-                        <p><a th:href="@{'/delete_image/' + ${productImage.id}}" class="btn btn-sm">Delete</a></p>
+                        <p>
+                            <a th:href="@{'/delete_image/' + ${productImage.id}}" class="btn btn-sm">Delete</a>
+                            <a th:href="@{'/mark_image_primary/' + ${productImage.id}}" th:disabled="${productImage.isPrimary}" class="btn btn-sm">Mark Primary</a>
+                        </p>
                     </div>
                 </a>
             </div>

@@ -45,11 +45,12 @@ public class IndexController {
     public ModelAndView index() {
         ModelAndView mav = new ModelAndView("index");
 
+        // load TextBook list
         Category textBookCategory = categoryRepository.findById(BaseCategory.TEXT_BOOK.getId()).isPresent() ? categoryRepository.findById(BaseCategory.TEXT_BOOK.getId()).get() : null;
         if (textBookCategory != null) {
             List<Product> topTextBookList = productRepository.getProductListByCategory(textBookCategory);
             mav.addObject("topTextBookList", topTextBookList);
-            mav.addObject("topTextBookImageMap", this.getProductImageMap(topTextBookList));
+            mav.addObject("topTextBookImageMap", this.getPrimaryProductImageMap(topTextBookList));
             mav.addObject("topTextBookPriceMap", this.getPriceMap(topTextBookList));
         }
         return mav;
@@ -64,26 +65,13 @@ public class IndexController {
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public ModelAndView signup() {
         ModelAndView mav = new ModelAndView("signup");
-        User user = new User();
-        mav.addObject("user", user);
+        mav.addObject("user", new User());
         return mav;
     }
 
     @RequestMapping(value = "/product/create", method = RequestMethod.GET)
     public ModelAndView createProduct() {
         ModelAndView mav = new ModelAndView("product/create");
-        return mav;
-    }
-
-    @RequestMapping(value = "/product/edit", method = RequestMethod.GET)
-    public ModelAndView editProduct() {
-        ModelAndView mav = new ModelAndView("product/edit");
-        return mav;
-    }
-
-    @RequestMapping(value = "/product/view", method = RequestMethod.GET)
-    public ModelAndView viewProduct() {
-        ModelAndView mav = new ModelAndView("product/view");
         return mav;
     }
 
@@ -97,7 +85,7 @@ public class IndexController {
 
         List<Product> productList = this.search(keyword, category);
         mav.addObject("productList", productList);
-        mav.addObject("productImageMap", this.getProductImageMap(productList));
+        mav.addObject("productImageMap", this.getPrimaryProductImageMap(productList));
         mav.addObject("priceMap", this.getPriceMap(productList));
         return mav;
     }
@@ -106,6 +94,14 @@ public class IndexController {
         Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
         for (Product product : productList) {
             productImageMap.put(product.getId(), productImageRepository.findByProduct(product));
+        }
+        return productImageMap;
+    }
+
+    private Map<Integer, ProductImage> getPrimaryProductImageMap(List<Product> productList) {
+        Map<Integer, ProductImage> productImageMap = new HashMap<>();
+        for (Product product : productList) {
+            productImageMap.put(product.getId(), productImageRepository.findByProduct(product).stream().filter(obj -> obj.getIsPrimary()).findAny().orElse(null));
         }
         return productImageMap;
     }
@@ -119,13 +115,12 @@ public class IndexController {
     }
 
     private List<Product> search(String keyword, Category category) {
-        List<Product> productList = new ArrayList<>();
+        List<Product> productList;
         if (category != null) {
             productList = productRepository.searchByKeyword(keyword, category);
         } else {
             productList = productRepository.searchByKeyword(keyword);
         }
-
         return productList;
     }
 
@@ -140,26 +135,12 @@ public class IndexController {
         mav.addObject("priceList", priceRepository.findByProduct(product));
 
         List<Review> reviewList = reviewRepository.findByProduct(product);
-
         mav.addObject("reviewList", reviewList);
 
         // Add avg rate and breakdown
-        Map<String, String> rateMap = new HashMap<>();
-        double totalRate = 0;
-        for (Review review : reviewList) {
-            if (rateMap.containsKey(review.getRate().toString())) {
-                int count = Integer.parseInt(rateMap.get(review.getRate().toString()));
-                count++;
-                rateMap.put(review.getRate().toString(), Integer.toString(count));
-            } else {
-                rateMap.put(review.getRate().toString(), "1");
-            }
-            totalRate += review.getRate();
-        }
-        rateMap.put("avg", String.valueOf(totalRate / reviewList.size()));
+        mav.addObject("rateMap", this.getAvgRateAndBreakdownMap(reviewList));
 
-        mav.addObject("rateMap", rateMap);
-
+        // initialize disabled dates
         List<LocalDate> disabledStartDateList = new ArrayList<>();
         List<LocalDate> disabledEndDateList = new ArrayList<>();
 
@@ -173,6 +154,23 @@ public class IndexController {
         mav.addObject("disabledStartDateList", disabledStartDateList);
         mav.addObject("disabledEndDateList", disabledEndDateList);
         return mav;
+    }
+
+    private Map<String, String> getAvgRateAndBreakdownMap(List<Review> reviewList) {
+        Map<String, String> rateMap = new HashMap<>();
+        double totalRate = 0;
+        for (Review review : reviewList) {
+            if (rateMap.containsKey(review.getRate().toString())) {
+                int count = Integer.parseInt(rateMap.get(review.getRate().toString()));
+                count++;
+                rateMap.put(review.getRate().toString(), Integer.toString(count));
+            } else {
+                rateMap.put(review.getRate().toString(), "1");
+            }
+            totalRate += review.getRate();
+        }
+        rateMap.put("avg", String.valueOf(totalRate / reviewList.size()));
+        return rateMap;
     }
 
     @RequestMapping(value = "/browse_product", method = RequestMethod.GET)
@@ -189,15 +187,8 @@ public class IndexController {
             productList = productRepository.findAll();
         }
         mav.addObject("productList", productList);
-
-        Map<Integer, List<ProductImage>> productImageMap = new HashMap<>();
-        Map<Integer, List<Price>> priceMap = new HashMap<>();
-        for (Product product : productList) {
-            productImageMap.put(product.getId(), productImageRepository.findByProduct(product));
-            priceMap.put(product.getId(), priceRepository.findByProduct(product));
-        }
-        mav.addObject("productImageMap", productImageMap);
-        mav.addObject("priceMap", priceMap);
+        mav.addObject("productImageMap", this.getPrimaryProductImageMap(productList));
+        mav.addObject("priceMap", this.getPriceMap(productList));
 
         return mav;
     }
@@ -212,8 +203,7 @@ public class IndexController {
     @RequestMapping(value = "/post_product", method = RequestMethod.GET)
     public ModelAndView postProduct() {
         ModelAndView mav = new ModelAndView("/product/create");
-        Product product = new Product();
-        mav.addObject("product", product);
+        mav.addObject("product", new Product());
         return mav;
     }
 

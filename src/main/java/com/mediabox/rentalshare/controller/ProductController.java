@@ -61,13 +61,11 @@ public class ProductController {
         User user = userRepository.findByEmail(name);
 
         Product product = productRepository.findById(Integer.parseInt(productId)).isPresent() ? productRepository.findById(Integer.parseInt(productId)).get() : null;
-
         review.setProduct(product);
         review.setStatus(1);
         review.setUser(user);
         review.setCreateTimestamp(new Date());
         review.setUpdateTimestamp(new Date());
-
         reviewRepository.save(review);
 
         return mav;
