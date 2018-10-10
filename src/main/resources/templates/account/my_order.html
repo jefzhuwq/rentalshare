@@ -19,18 +19,14 @@
         font-size: 0.75em;
     }
 
-
     /* Times */
     .agenda .agenda-time { width: 250px; }
-
 
     /* Events */
     .agenda .agenda-events {  }
     .agenda .agenda-events .agenda-event {  }
 
-    @media (max-width: 500px) {
-
-    }
+    @media (max-width: 500px) {}
 
 </style>
 <body>
@@ -67,7 +63,7 @@
                                 <td class="agenda-events">
                                     <div class="agenda-event">
                                         <!--<i class="glyphicon glyphicon-repeat text-muted" title="Repeating event"></i> -->
-                                        <span th:text="${rentalRequest.product.productName}" />
+                                        <a th:text="${rentalRequest.product.productName}" th:href="${'/view_product/' + rentalRequest.product.id}" />
                                     </div>
                                 </td>
                                 <td class="agenda-date active" rowspan="1">

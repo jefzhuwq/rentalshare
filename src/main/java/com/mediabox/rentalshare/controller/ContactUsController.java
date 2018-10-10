@@ -15,7 +15,7 @@ public class ContactUsController {
 
     @RequestMapping(value = "/submit_contactus", method = RequestMethod.POST)
     public ModelAndView createNewProduct(@ModelAttribute ContactUs contactUs) {
-        ModelAndView modelAndView = new ModelAndView("redirect:/index");
+        ModelAndView modelAndView = new ModelAndView("contact_success");
         contactUs.setCreateTimestamp(new Date());
         contactUs.setUpdateTimestamp(new Date());
         contactUs.setStatus(ContactUsStatus.CREATED.getValue());

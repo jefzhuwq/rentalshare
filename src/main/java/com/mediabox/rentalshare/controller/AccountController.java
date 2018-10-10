@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.*;
@@ -36,6 +38,9 @@ import static com.mediabox.rentalshare.utils.Constants.UPLOADED_FOLDER;
 @Controller
 public class AccountController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     ProductRepository productRepository;
@@ -297,6 +302,46 @@ public class AccountController {
         return mav;
     }
 
+    @RequestMapping(value = "/my_profile", method = RequestMethod.GET)
+    public ModelAndView myProfile() {
+        ModelAndView mav = new ModelAndView("/account/my_profile");
+        User user = this.userRepository.findByEmail(this.getLoggedUserName());
+        mav.addObject("user", user);
+        return mav;
+    }
+
+    @RequestMapping(value = "/update_profile", method = RequestMethod.POST)
+    public ModelAndView updateProfile(@ModelAttribute User user) {
+        ModelAndView mav = new ModelAndView("redirect:/my_profile");
+        if (user.getEmail().equals(this.getLoggedUserName())) {
+            User userEdit = this.userRepository.findByEmail(this.getLoggedUserName());
+            userEdit.setEmail2(user.getEmail2());
+            userEdit.setUserName(user.getUserName());
+            userEdit.setPhoneNumber(user.getPhoneNumber());
+            userEdit.setUpdateTimestamp(new Date());
+            this.userRepository.save(userEdit);
+        }
+        return mav;
+    }
+
+    @RequestMapping(value = "/update_password", method = RequestMethod.POST)
+    public ModelAndView updatePassword(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("redirect:/my_profile");
+        String newPassword = request.getParameter("password");
+        String confirmPassword = request.getParameter("confirmPassword");
+        if (!StringUtils.isEmpty(confirmPassword) && !StringUtils.isEmpty(newPassword) && newPassword.equals(confirmPassword)) {
+           String newPasswordEncrypted = this.bCryptPasswordEncoder.encode(newPassword);
+            // update password for current logged user
+            User user = this.userRepository.findByEmail(this.getLoggedUserName());
+            user.setPassword(newPasswordEncrypted);
+            user.setUpdateTimestamp(new Date());
+            this.userRepository.save(user);
+        } else {
+            mav.addObject("errorMessage", "Passwords don't match.");
+        }
+        return mav;
+    }
+
     @RequestMapping(value = "/delete_image/{id}", method = RequestMethod.GET)
     public ModelAndView deleteImage(@PathVariable("id") int id) {
         ProductImage productImage = productImageRepository.findById(id).isPresent() ? productImageRepository.findById(id).get() : null;
@@ -321,6 +366,22 @@ public class AccountController {
 
         return mav;
     }
+
+    @RequestMapping(value = "/remove_from_cart/{id}", method = RequestMethod.GET)
+    public ModelAndView removeFromCart(@PathVariable("id") int id) {
+        RentalRequest rentalRequest = rentalRequestRepository.findById(id).isPresent() ? rentalRequestRepository.findById(id).get() : null;
+
+        ModelAndView mav = new ModelAndView();
+        if (rentalRequest != null && rentalRequest.getRequester().getEmail().equals(this.getLoggedUserName())) {
+            mav.setViewName("redirect:/cart");
+            rentalRequestRepository.delete(rentalRequest);
+        } else{
+            mav.setViewName("/error");
+        }
+
+        return mav;
+    }
+
 
     @RequestMapping(value = "/mark_image_primary/{id}", method = RequestMethod.GET)
     public ModelAndView markImagePrimary(@PathVariable("id") int id) {

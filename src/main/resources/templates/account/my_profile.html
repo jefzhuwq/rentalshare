@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: copy"></head>
+<body>
+
+<!-- header -->
+<div th:replace="fragments/header :: copy"></div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- Nav tabs --><div class="card">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Basic Info</a></li>
+                <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Password</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="home">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><b>Basic Info</b></div>
+                        <div class="panel-body">
+                            <form style="margin:10px;" th:action="@{/update_profile}" th:object="${user}" method="POST">
+                                <div class="form-group row">
+                                    <label for="email" class="col-2 col-form-label">Primary Email (Primarily used for login)</label>
+                                    <div class="col-10">
+                                        <input disabled="disabled" class="form-control" type="text" id="email" th:field="*{email}" th:required="required">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="email2" class="col-2 col-form-label">Other Email</label>
+                                    <div class="col-10">
+                                        <input disable="true" class="form-control" type="text" id="email2" th:field="*{email2}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="name" class="col-2 col-form-label">Name</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="text"id="name" maxlength="70" th:field="*{userName}" th:required="required">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="phoneNumber" class="col-2 col-form-label">Phone Number</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="text" id="phoneNumber" th:field="*{phoneNumber}" th:required="required">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-10">
+                                        <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+                                        <a href="/product_list" class="btn btn-lg btn-default">Back</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="profile">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><b>Change Password</b></div>
+                        <div class="panel-body">
+                            <form style="margin:10px;" th:action="@{/update_password}" method="POST">
+                                <div align="center" th:if="${param.errorMessage}">
+                                    <p style="font-size: 20; color: #FF1C19;" th:text="${param.errorMessage}"></p>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="password" class="col-2 col-form-label">New Password</label>
+                                    <div class="col-10">
+                                        <input type="password" th:required="required" id="password" placeholder="Password" name="password" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="confirmPassword" class="col-2 col-form-label">Confirm Password</label>
+                                    <div class="col-10">
+                                        <input type="password" th:required="required" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-10">
+                                        <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+                                        <a href="/product_list" class="btn btn-lg btn-default">Back</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+
+<!--==========Footer area==========-->
+<footer th:replace="fragments/footer :: copy"></footer>
+<!--==========End Footer area==========-->
+
+<div th:replace="fragments/js :: copy"></div>
+
+
+</body>
+</html>

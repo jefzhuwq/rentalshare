@@ -54,7 +54,7 @@
                                     </td>
                                     <td class="agenda-events">
                                         <div class="agenda-event">
-                                            <span th:text="${rentalRequest.requester.username}" />
+                                            <span th:text="${rentalRequest.requester.userName}" />
                                         </div>
                                     </td>
                                     <td class="agenda-events">
@@ -67,7 +67,7 @@
                                     </td>
                                     <th class="agenda-events">
                                         <div class="agenda-event">
-                                            <a href="#">Remove</a>
+                                            <a th:href="@{'/remove_from_cart/' + ${rentalRequest.id}}" class="btn btn-sm">Remove</a>
                                         </div>
                                     </th>
                                 </tr>
