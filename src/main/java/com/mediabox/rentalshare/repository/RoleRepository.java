@@ -1,7 +1,6 @@
 package com.mediabox.rentalshare.repository;
 
 import com.mediabox.rentalshare.model.Role;
-import com.mediabox.rentalshare.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

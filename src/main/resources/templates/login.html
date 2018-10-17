@@ -17,9 +17,9 @@
         <h3 class="form-signin-heading" th:text="Welcome"></h3>
         <br/>
 
-        <input type="text" id="email" name="email"  th:placeholder="Email"
+        <input type="text" id="email" name="email"  th:placeholder="Email" th:required="required"
                class="form-control" /> <br/>
-        <input type="password"  th:placeholder="Password"
+        <input type="password"  th:placeholder="Password" th:required="required"
                id="password" name="password" class="form-control" /> <br />
 
         <div align="center" th:if="${param.error}">

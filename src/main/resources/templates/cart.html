@@ -7,7 +7,81 @@
 <!-- header -->
 <div th:replace="~{fragments/header :: copy}"></div>
 
-Cart
+<section class="men_clothing_area">
+    <div class="container custome_container">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="men_clothing_tittle">
+                    <h2>My Cart</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="agenda">
+                    <div class="table-responsive">
+                        <form th:action="@{/submit_order}" method="post">
+                            <table class="table table-condensed table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Shipping Option</th>
+                                    <th>User</th>
+                                    <th>Price</th>
+                                    <th>Edit</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- Single event in a single day -->
+                                <tr th:each="rentalRequest, i : ${rentalRequestList}">
+                                    <td class="agenda-time">
+                                        <a th:text="${rentalRequest.product.productName}" th:href="'/view_product/' + ${rentalRequest.product.id}" />
+                                    </td>
+                                    <td class="agenda-date active" rowspan="1">
+                                        <div class="dayofmonth"><span th:text="${#dates.day(rentalRequest.startDate)}" /></div>
+                                        <div class="dayofweek"><span th:text="${#dates.dayOfWeekName(rentalRequest.startDate)}" /></div>
+                                        <div class="shortdate text-muted"><span th:text="${#dates.monthName(rentalRequest.startDate) + ',' + #dates.year(rentalRequest.startDate)}" /></div>
+                                    </td>
+                                    <td class="agenda-date active" rowspan="1">
+                                        <div class="dayofmonth"><span th:text="${#dates.day(rentalRequest.endDate)}" /></div>
+                                        <div class="dayofweek"><span th:text="${#dates.dayOfWeekName(rentalRequest.endDate)}" /></div>
+                                        <div class="shortdate text-muted"><span th:text="${#dates.monthName(rentalRequest.endDate) + ',' + #dates.year(rentalRequest.endDate)}" /></div>
+                                    </td>
+                                    <td class="agenda-time">
+                                        <span th:text="${T(com.mediabox.rentalshare.model.ShippingOption).getTextByValue(rentalRequest.shippingOption)}" />
+                                    </td>
+                                    <td class="agenda-events">
+                                        <div class="agenda-event">
+                                            <span th:text="${rentalRequest.requester.userName}" />
+                                        </div>
+                                    </td>
+                                    <td class="agenda-events">
+                                        <div class="agenda-event">
+                                            <span th:each="price : ${priceMap.get(rentalRequest.product.id)}">
+                                                <span th:text="${T(com.mediabox.rentalshare.model.PeriodType).getTextByValue(price.periodType)}" /> :
+                                                <span th:text="'$'+ ${price.unitPrice}" />
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <th class="agenda-events">
+                                        <div class="agenda-event">
+                                            <a th:href="@{'/remove_from_cart/' + ${rentalRequest.id}}" class="btn btn-sm">Remove</a>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <h4 th:text="'Total Price: $' + ${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 2, 'POINT')}" />
+                            <input type="submit" value="Checkout" class="btn btn-lg btn-primary" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!--==========Footer area==========-->
 <footer th:replace="~{fragments/footer :: copy}"></footer>

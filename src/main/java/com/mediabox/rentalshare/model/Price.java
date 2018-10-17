@@ -7,11 +7,11 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name="price")
+@Table(name = "price")
 public class Price {
-	
+
     @Id
-    @Column(name="price_id")
+    @Column(name = "price_id")
     @GeneratedValue
     private Integer id;
 
@@ -22,7 +22,7 @@ public class Price {
     private int periodType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="product_id")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(name = "createtimestamp")

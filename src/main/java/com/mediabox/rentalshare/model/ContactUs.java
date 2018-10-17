@@ -11,18 +11,18 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name="contact_us")
+@Table(name = "contact_us")
 public class ContactUs {
-	
+
     @Id
-    @Column(name="contact_id")
+    @Column(name = "contact_id")
     @GeneratedValue
     private Integer id;
 
     @Column(name = "email")
     private String email;
 
-    @Column(name="full_name")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "phone_number")
