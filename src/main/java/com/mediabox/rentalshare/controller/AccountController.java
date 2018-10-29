@@ -65,13 +65,13 @@ public class AccountController {
 
     @RequestMapping(value = "/my_account", method = RequestMethod.GET)
     public ModelAndView myAccount() {
-        ModelAndView mav = new ModelAndView("/account/my_account");
+        ModelAndView mav = new ModelAndView("account/my_account");
         return mav;
     }
 
     @RequestMapping(value = "/my_favorite", method = RequestMethod.GET)
     public ModelAndView myFavorite() {
-        ModelAndView mav = new ModelAndView("/account/my_favorite");
+        ModelAndView mav = new ModelAndView("account/my_favorite");
 
         List<Favorite> favoriteList = favoriteRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("favoriteList", favoriteList);
@@ -89,7 +89,7 @@ public class AccountController {
 
     @RequestMapping(value = "/my_order", method = RequestMethod.GET)
     public ModelAndView myOrder() {
-        ModelAndView mav = new ModelAndView("/account/my_order");
+        ModelAndView mav = new ModelAndView("account/my_order");
 
         List<RentalRequest> rentalRequestList = rentalRequestRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("rentalRequestList", rentalRequestList);
@@ -122,7 +122,7 @@ public class AccountController {
 
     @RequestMapping(value = "/checkout_cart", method = RequestMethod.GET)
     public ModelAndView checkoutCart() {
-        ModelAndView mav = new ModelAndView("/account/checkout_cart");
+        ModelAndView mav = new ModelAndView("account/checkout_cart");
         return mav;
     }
 
@@ -168,7 +168,7 @@ public class AccountController {
 
     @RequestMapping(value = "/my_schedule", method = RequestMethod.GET)
     public ModelAndView mySchedule() {
-        ModelAndView mav = new ModelAndView("/account/my_schedule");
+        ModelAndView mav = new ModelAndView("account/my_schedule");
 
         List<Product> productList = productRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("productList", productList);
@@ -182,7 +182,7 @@ public class AccountController {
 
     @RequestMapping(value = "/my_schedule", method = RequestMethod.POST)
     public ModelAndView selectProductSchedule(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("/account/my_schedule");
+        ModelAndView mav = new ModelAndView("account/my_schedule");
 
         String selectedProductId = request.getParameter("select_product");
         List<Product> productList = productRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
@@ -214,7 +214,7 @@ public class AccountController {
 
     @RequestMapping(value = "/product_list", method = RequestMethod.GET)
     public ModelAndView productList() {
-        ModelAndView mav = new ModelAndView("/account/product_list");
+        ModelAndView mav = new ModelAndView("account/product_list");
 
         List<Product> productList = productRepository.findByUser(userRepository.findByEmail(this.getLoggedUserName()));
         mav.addObject("productList", productList);
@@ -223,7 +223,7 @@ public class AccountController {
 
     @RequestMapping(value = "/edit_product/{id}", method = RequestMethod.GET)
     public ModelAndView editProduct(@PathVariable("id") int id) {
-        ModelAndView mav = new ModelAndView("/product/edit");
+        ModelAndView mav = new ModelAndView("product/edit");
 
         Product product = productRepository.findById(id).isPresent() ? productRepository.findById(id).get() : null;
 
@@ -304,7 +304,7 @@ public class AccountController {
 
     @RequestMapping(value = "/my_profile", method = RequestMethod.GET)
     public ModelAndView myProfile() {
-        ModelAndView mav = new ModelAndView("/account/my_profile");
+        ModelAndView mav = new ModelAndView("account/my_profile");
         User user = this.userRepository.findByEmail(this.getLoggedUserName());
         mav.addObject("user", user);
         return mav;
@@ -528,6 +528,7 @@ public class AccountController {
             productImage.setCreateTimestamp(new Date());
             productImage.setUpdateTimestamp(new Date());
             productImage.setProduct(productEdit);
+            productImage.setIsPrimary(false);
             productImageRepository.save(productImage);
         }
     }

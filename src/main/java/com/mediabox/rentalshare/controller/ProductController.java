@@ -41,10 +41,10 @@ public class ProductController {
 
     @RequestMapping(value = "/new_review", method = RequestMethod.GET)
     public ModelAndView newReview(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("/review/create");
+        ModelAndView mav = new ModelAndView("review/create");
         String productId = request.getParameter("productId");
 
-        Product product = productRepository.findById(Integer.parseInt(productId)).orElseThrow();
+        Product product = productRepository.findById(Integer.parseInt(productId)).get();
         mav.addObject("product", product);
         mav.addObject("review", new Review());
         return mav;
