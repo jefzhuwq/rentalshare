@@ -20,7 +20,8 @@ public class SignupController {
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
-        ModelAndView modelAndView = new ModelAndView();
+        ModelAndView mav = new ModelAndView();
+//        StringBuilder error = new StringBuilder();
         User userExists = userService.findUserByEmail(user.getEmail());
         if (userExists != null) {
             bindingResult
@@ -28,14 +29,15 @@ public class SignupController {
                             "There is already a user registered with the email provided");
         }
         if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("signup");
+//            bindingResult.getAllErrors().forEach(obj-> error.append(obj.toString()));
+//            mav.addObject("errorString", error.toString());
+            mav.setViewName("signup");
         } else {
             userService.saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
-            modelAndView.setViewName("signup");
-
+            mav.addObject("successMessage", "User has been registered successfully");
+            mav.addObject("user", new User());
+            mav.setViewName("login");
         }
-        return modelAndView;
+        return mav;
     }
 }

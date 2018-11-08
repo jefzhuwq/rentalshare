@@ -126,7 +126,7 @@ public class IndexController {
 
     @RequestMapping(value = "/view_product/{id}", method = RequestMethod.GET)
     public ModelAndView editProduct(@PathVariable("id") int id) {
-        ModelAndView mav = new ModelAndView("/product/view");
+        ModelAndView mav = new ModelAndView("product/view");
         Product product = productRepository.findById(id).isPresent() ? productRepository.findById(id).get() : null;
         mav.addObject("product", product);
         mav.addObject("productImageList", productImageRepository.findByProduct(product));
@@ -202,7 +202,7 @@ public class IndexController {
 
     @RequestMapping(value = "/post_product", method = RequestMethod.GET)
     public ModelAndView postProduct() {
-        ModelAndView mav = new ModelAndView("/product/create");
+        ModelAndView mav = new ModelAndView("product/create");
         mav.addObject("product", new Product());
         return mav;
     }

@@ -30,7 +30,7 @@
                             <a th:href="@{'/edit_product/' + ${product.id}}">edit</a>
                         </td>
                         <td th:text="${product.productName}"></td>
-                        <td th:text="${product.category.categoryName}"></td>
+                        <td th:text="${product.category != null ? product.category.categoryName : ''}"></td>
                         <td th:text="${product.updateTimestamp}"></td>
                     </div>
                 </tr>
